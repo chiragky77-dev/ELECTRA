@@ -1,0 +1,3378 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELECTRA — Election Awareness, Made Simple</title>
+  <meta name="description" content="An interactive educational platform that helps citizens understand how elections work, explore the voting process, and demystify democracy." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- React 18 & ReactDOM 18 UMD -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <!-- Confetti Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+  <style>
+/* ELECTRA Design System â€” Minimalist Fintech & Civic-Tech */
+:root {
+  --font-scale: 1;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-kannada: 'Noto Sans Kannada', 'Inter', sans-serif;
+
+  /* Base transitions & tokens */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* Light Theme (Default: Warm Off-White, Charcoal, Restrained Slate/Cobalt) */
+html[data-theme='light'],
+html:not([data-theme='dark']) {
+  --bg-primary: #FBFBFA;
+  --bg-secondary: #F4F4F1;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FAFAF8;
+  --bg-muted: #EBEBE6;
+  --border-subtle: #E5E5DE;
+  --border-strong: #D1D1C7;
+  --border-focus: #2563EB;
+  
+  --text-primary: #121316;
+  --text-secondary: #52545C;
+  --text-muted: #848690;
+  --text-inverse: #FFFFFF;
+
+  --accent-primary: #1E40AF;
+  --accent-hover: #1D4ED8;
+  --accent-subtle: #EFF4FE;
+  --accent-text: #1E40AF;
+  
+  --warm-accent: #B45309;
+  --warm-subtle: #FEF3C7;
+
+  --success: #059669;
+  --success-subtle: #ECFDF5;
+  --warning: #D97706;
+  --warning-subtle: #FFFBEB;
+  --danger: #DC2626;
+  --danger-subtle: #FEF2F2;
+
+  --badge-bg: #F0F0EB;
+  --badge-text: #3D3F47;
+}
+
+/* Dark Theme (Charcoal/Near-Black, Refined Borders) */
+html[data-theme='dark'] {
+  --bg-primary: #0F1014;
+  --bg-secondary: #16171D;
+  --bg-card: #1C1D24;
+  --bg-card-hover: #22232C;
+  --bg-muted: #272933;
+  --border-subtle: #2B2D38;
+  --border-strong: #3D4050;
+  --border-focus: #3B82F6;
+
+  --text-primary: #F3F4F6;
+  --text-secondary: #A0A3AF;
+  --text-muted: #6B7082;
+  --text-inverse: #0F1014;
+
+  --accent-primary: #3B82F6;
+  --accent-hover: #60A5FA;
+  --accent-subtle: #192642;
+  --accent-text: #93C5FD;
+
+  --warm-accent: #F59E0B;
+  --warm-subtle: #362810;
+
+  --success: #10B981;
+  --success-subtle: #064E3B;
+  --warning: #F59E0B;
+  --warning-subtle: #451A03;
+  --danger: #EF4444;
+  --danger-subtle: #450A0A;
+
+  --badge-bg: #262833;
+  --badge-text: #D1D5DB;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* High Contrast Mode */
+html[data-high-contrast='true'] {
+  --border-subtle: #888888 !important;
+  --border-strong: #FFFFFF !important;
+  --text-secondary: #FFFFFF !important;
+  --text-muted: #DDDDDD !important;
+}
+
+html[data-high-contrast='true'][data-theme='light'] {
+  --border-subtle: #222222 !important;
+  --border-strong: #000000 !important;
+  --text-secondary: #111111 !important;
+  --text-muted: #333333 !important;
+}
+
+/* Reduced Motion Mode */
+html[data-reduced-motion='true'] * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Base Reset & Typography */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: calc(15px * var(--font-scale));
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Fonts for Kannada */
+[lang='kn'] {
+  font-family: var(--font-kannada), var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+/* Refined App Bar */
+.electra-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(251, 251, 250, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+html[data-theme='dark'] .electra-header {
+  background-color: rgba(15, 16, 20, 0.92);
+}
+
+/* Cards & Panels */
+.electra-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.electra-card:hover {
+  border-color: var(--border-strong);
+}
+
+.electra-card.interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Badges */
+.electra-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+  border: 1px solid var(--border-subtle);
+}
+
+.electra-badge.accent {
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.electra-badge.simulation {
+  background-color: var(--warm-subtle);
+  color: var(--warm-accent);
+  border-color: rgba(217, 119, 6, 0.25);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.electra-badge.success {
+  background-color: var(--success-subtle);
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+/* Primary and Secondary Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-strong);
+}
+
+.btn-outline {
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+}
+
+.btn-ghost {
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Floating Banner */
+.disclaimer-banner {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* Grid Utilities */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+/**
+ * ELECTRA â€” Election Awareness, Made Simple.
+ * Standalone Production Application Script (Zero-Build Runtime)
+ */
+
+(function () {
+  const { createElement: h, useState, useEffect, useContext, createContext } = React;
+
+  /* =========================================================================
+     1. TRANSLATIONS (ENGLISH & KANNADA)
+     ========================================================================= */
+  const translations = {
+    en: {
+      brand: "ELECTRA",
+      tagline: "Election Awareness, Made Simple.",
+      heroSub: "Understand how elections work, explore the voting process, and build your election knowledge through interactive learning.",
+      heroCtaExplore: "Explore Elections",
+      heroCtaExperience: "Experience Voting",
+      simulationNotice: "EDUCATIONAL SIMULATION â€” This simulator does not cast or submit a real vote.",
+      officialNotice: "ELECTRA is an independent educational platform. Official election rules are governed by the respective Election Authorities.",
+      nav: {
+        home: "Home",
+        explore: "Explore",
+        journey: "Election Journey",
+        simulator: "Voting Simulator",
+        glossary: "Knowledge Hub",
+        quiz: "Civic Quiz",
+        mythFact: "Myth or Fact",
+        ai: "Ask ELECTRA AI",
+        about: "About",
+        progress: "Learning Progress",
+        accessibility: "Accessibility",
+        theme: "Theme",
+        language: "Language"
+      },
+      paths: {
+        understand: {
+          title: "Understand",
+          desc: "Learn core democratic principles and why every vote matters in governance."
+        },
+        explore: {
+          title: "Explore",
+          desc: "Walk through the 7 chronological stages from announcement to declaration."
+        },
+        experience: {
+          title: "Experience",
+          desc: "Step inside an interactive mock polling booth and test ballot mechanisms."
+        },
+        test: {
+          title: "Test",
+          desc: "Challenge your civic knowledge with our 6-question certified quiz."
+        }
+      },
+      simulator: {
+        badge: "EDUCATIONAL SIMULATION",
+        banner: "This simulator does not cast or submit a real vote. No real credentials are requested or stored.",
+        introTitle: "Experience the Voting Process",
+        introDesc: "Demystify what happens inside the voting compartment. In this fictional simulation, you will review candidates, make your choice, inspect the confirmation slip, and observe how counting is conducted.",
+        step1Title: "Learn Before You Vote",
+        step1Points: [
+          "Voting is confidential: The secrecy of your ballot is protected by law.",
+          "Verify your eligibility: In real elections, you must be registered on the electoral roll.",
+          "Review choices: Voters can choose any valid candidate or NOTA (None of the Above).",
+          "Single submission: Once confirmed, a vote cannot be cast a second time."
+        ],
+        step2Title: "Demo City Council Election",
+        step2Sub: "Select one candidate or choose NOTA. You will have a chance to review your selection before confirmation.",
+        btnStart: "Start Demo Voting",
+        btnReview: "Review Selection",
+        btnBack: "Change Selection",
+        btnConfirm: "Confirm Demo Vote",
+        btnTryAgain: "Try Simulator Again",
+        btnResetAll: "Reset All Demo Votes",
+        reviewTitle: "Review Your Choice",
+        reviewDesc: "Please verify your selection carefully. In an actual polling booth, once the vote is cast, it cannot be altered.",
+        selectedCandidate: "Your Selected Candidate:",
+        confirmSuccessTitle: "Demo Vote Recorded Successfully",
+        confirmSuccessDesc: "Your fictional vote has been recorded into the mock tally buffer. In real elections equipped with VVPAT (Voter Verifiable Paper Audit Trail), a paper slip is visible for 7 seconds to confirm your selection before dropping into the sealed box.",
+        countingTitle: "Simulated Vote Counting",
+        countingDesc: "Observe how votes are securely aggregated from the demo polling machine.",
+        resultsTitle: "Simulated Election Results",
+        resultsSub: "Live tally calculated from verified simulation sessions in this demo container.",
+        totalVotesCast: "Total Demo Votes Cast",
+        leadingCandidate: "Plurality Leader",
+        notaNote: "NOTA represents voter dissent and ensures your presence without selecting a candidate."
+      },
+      ai: {
+        title: "Ask ELECTRA AI",
+        subtitle: "Neutral, factual answers to your election and civic governance questions.",
+        modeSimple: "Simple Language",
+        modeDetailed: "Detailed Breakdown",
+        placeholder: "Ask anything about elections, voting, stages, or counting...",
+        btnAsk: "Ask Question",
+        exampleQueriesLabel: "Common Questions:",
+        shortAnswer: "Short Answer",
+        howItWorks: "How It Works",
+        relatedTopics: "Related Topics",
+        sources: "Verified Sources",
+        neutralityNotice: "ELECTRA AI provides strictly neutral educational information. It does not endorse candidates, parties, or advise on how to vote.",
+        fallbackNotice: "Running on verified local civic-intelligence engine (zero external API dependency)."
+      },
+      quiz: {
+        title: "Civic Knowledge Quiz",
+        subtitle: "Test your understanding of election processes, voting rules, and democratic rights.",
+        questionOf: "Question",
+        nextBtn: "Next Question",
+        seeResultsBtn: "View My Results",
+        retakeBtn: "Retake Quiz",
+        scoreTitle: "Your Civic Score",
+        reviewLabel: "Review & Explanations",
+        certifiedBadge: "Certified Civic Learner",
+        perfectScore: "Outstanding! You have a thorough grasp of the election process.",
+        goodScore: "Great job! A solid understanding of your civic rights and voting stages.",
+        practiceScore: "Keep exploring! Review the stages and glossary to master election mechanics."
+      },
+      mythFact: {
+        title: "Myth vs. Fact",
+        subtitle: "Bust common election rumors and understand verified voting procedures.",
+        badgeFact: "VERIFIED FACT",
+        badgeMyth: "DEBUNKED MYTH",
+        btnCheck: "Reveal Fact Check",
+        filterAll: "All Topics",
+        officialSource: "Source"
+      },
+      glossary: {
+        title: "Knowledge Hub & Glossary",
+        subtitle: "Clear definitions and practical context for crucial democratic and election terms.",
+        searchPlaceholder: "Search terms (e.g. EVM, NOTA, Scrutiny, Polling Station)...",
+        allCategories: "All Categories",
+        categories: {
+          basics: "Election Basics",
+          voting: "Voting & Polling",
+          process: "Election Process",
+          counting: "Counting & Results",
+          terminology: "Terminology",
+          faqs: "Common Questions"
+        },
+        recentlyViewed: "Recently Viewed Terms",
+        whyItMatters: "Why it matters to voters",
+        related: "Related terms",
+        noResults: "No terms found matching your query."
+      },
+      a11y: {
+        title: "Accessibility & Display Controls",
+        fontSize: "Text Size",
+        fontSizeDesc: "Adjust typography scale for comfortable reading.",
+        contrast: "High Contrast Mode",
+        contrastDesc: "Enhance borders and background contrast for optimal visibility.",
+        motion: "Reduced Motion",
+        motionDesc: "Disable dynamic animations and transitions.",
+        reset: "Reset to Default"
+      }
+    },
+    kn: {
+      brand: "à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ (ELECTRA)",
+      tagline: "à²šà³à²¨à²¾à²µà²£à²¾ à²œà²¾à²—à³ƒà²¤à²¿, à²¸à²°à²³ à²¹à²¾à²—à³‚ à²¸à³à²ªà²·à³à²Ÿ.",
+      heroSub: "à²šà³à²¨à²¾à²µà²£à³†à²—à²³à³ à²¹à³‡à²—à³† à²¨à²¡à³†à²¯à³à²¤à³à²¤à²µà³† à²Žà²‚à²¬à³à²¦à²¨à³à²¨à³ à²…à²°à³à²¥à²®à²¾à²¡à²¿à²•à³Šà²³à³à²³à²¿, à²®à²¤à²¦à²¾à²¨ à²ªà³à²°à²•à³à²°à²¿à²¯à³†à²¯à²¨à³à²¨à³ à²…à²¨à³à²µà³‡à²·à²¿à²¸à²¿ à²®à²¤à³à²¤à³ à²¸à²‚à²µà²¾à²¦à²¾à²¤à³à²®à²• à²•à²²à²¿à²•à³†à²¯ à²®à³‚à²²à²• à²¨à²¿à²®à³à²® à²œà³à²žà²¾à²¨à²µà²¨à³à²¨à³ à²µà³ƒà²¦à³à²§à²¿à²¸à²¿à²•à³Šà²³à³à²³à²¿.",
+      heroCtaExplore: "à²šà³à²¨à²¾à²µà²£à³†à²—à²³à²¨à³à²¨à³ à²…à²¨à³à²µà³‡à²·à²¿à²¸à²¿",
+      heroCtaExperience: "à²®à²¤à²¦à²¾à²¨à²µà²¨à³à²¨à³ à²…à²¨à³à²­à²µà²¿à²¸à²¿",
+      simulationNotice: "à²¶à³ˆà²•à³à²·à²£à²¿à²• à²¸à²¿à²®à³à²¯à³à²²à³‡à²¶à²¨à³ â€” à²ˆ à²¸à²¿à²®à³à²¯à³à²²à³‡à²Ÿà²°à³ à²¨à²¿à²œà²µà²¾à²¦ à²®à²¤à²µà²¨à³à²¨à³ à²šà²²à²¾à²¯à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²² à²…à²¥à²µà²¾ à²¸à²²à³à²²à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²².",
+      officialNotice: "à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ à²’à²‚à²¦à³ à²¸à³à²µà²¤à²‚à²¤à³à²° à²¶à³ˆà²•à³à²·à²£à²¿à²• à²µà³‡à²¦à²¿à²•à³†à²¯à²¾à²—à²¿à²¦à³†. à²…à²§à²¿à²•à³ƒà²¤ à²šà³à²¨à²¾à²µà²£à²¾ à²¨à²¿à²¯à²®à²—à²³à²¨à³à²¨à³ à²†à²¯à²¾ à²šà³à²¨à²¾à²µà²£à²¾ à²†à²¯à³‹à²—à²—à²³à³ à²¨à²¿à²°à³à²µà²¹à²¿à²¸à³à²¤à³à²¤à²µà³†.",
+      nav: {
+        home: "à²®à³à²–à²ªà³à²Ÿ",
+        explore: "à²…à²¨à³à²µà³‡à²·à²¿à²¸à²¿",
+        journey: "à²šà³à²¨à²¾à²µà²£à²¾ à²¹à²‚à²¤à²—à²³à³",
+        simulator: "à²®à²¤à²¦à²¾à²¨ à²¸à²¿à²®à³à²¯à³à²²à³‡à²Ÿà²°à³",
+        glossary: "à²œà³à²žà²¾à²¨ à²­à²‚à²¡à²¾à²°",
+        quiz: "à²°à²¸à²ªà³à²°à²¶à³à²¨à³† (à²•à³à²µà²¿à²œà³)",
+        mythFact: "à²®à²¿à²¥à³à²¯ vs à²¸à²¤à³à²¯",
+        ai: "à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ à²Žà² à²•à³‡à²³à²¿",
+        about: "à²¨à²®à³à²® à²¬à²—à³à²—à³†",
+        progress: "à²•à²²à²¿à²•à³†à²¯ à²ªà³à²°à²—à²¤à²¿",
+        accessibility: "à²ªà³à²°à²µà³‡à²¶à²¿à²¸à³à²µà²¿à²•à³†",
+        theme: "à²¥à³€à²®à³",
+        language: "à²­à²¾à²·à³†"
+      },
+      paths: {
+        understand: {
+          title: "à²…à²°à³à²¥à²®à²¾à²¡à²¿à²•à³Šà²³à³à²³à²¿",
+          desc: "à²ªà³à²°à²œà²¾à²ªà³à²°à²­à³à²¤à³à²µà²¦ à²®à³‚à²² à²¤à²¤à³à²µà²—à²³à²¨à³à²¨à³ à²®à²¤à³à²¤à³ à²†à²¡à²³à²¿à²¤à²¦à²²à³à²²à²¿ à²ªà³à²°à²¤à²¿à²¯à³Šà²‚à²¦à³ à²®à²¤à²¦ à²®à³Œà²²à³à²¯à²µà²¨à³à²¨à³ à²¤à²¿à²³à²¿à²¯à²¿à²°à²¿."
+        },
+        explore: {
+          title: "à²…à²¨à³à²µà³‡à²·à²¿à²¸à²¿",
+          desc: "à²…à²§à²¿à²¸à³‚à²šà²¨à³†à²¯à²¿à²‚à²¦ à²«à²²à²¿à²¤à²¾à²‚à²¶à²¦à²µà²°à³†à²—à³† 7 à²ªà³à²°à²®à³à²– à²¹à²‚à²¤à²—à²³à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿."
+        },
+        experience: {
+          title: "à²…à²¨à³à²­à²µà²¿à²¸à²¿",
+          desc: "à²®à²¾à²¦à²°à²¿ à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²¨à³à²¨à³ à²ªà³à²°à²µà³‡à²¶à²¿à²¸à²¿ à²®à²¤à³à²¤à³ à²¬à³à²¯à²¾à²²à³†à²Ÿà³ à²•à²¾à²°à³à²¯à²µà²¿à²§à²¾à²¨à²—à²³à²¨à³à²¨à³ à²ªà²°à³€à²•à³à²·à²¿à²¸à²¿."
+        },
+        test: {
+          title: "à²ªà²°à³€à²•à³à²·à²¿à²¸à²¿à²•à³Šà²³à³à²³à²¿",
+          desc: "à²¨à²®à³à²® 6 à²ªà³à²°à²¶à³à²¨à³†à²—à²³ à²°à²¸à²ªà³à²°à²¶à³à²¨à³†à²¯à³Šà²‚à²¦à²¿à²—à³† à²¨à²¿à²®à³à²® à²šà³à²¨à²¾à²µà²£à²¾ à²œà³à²žà²¾à²¨à²µà²¨à³à²¨à³ à²ªà²°à³€à²•à³à²·à²¿à²¸à²¿."
+        }
+      },
+      simulator: {
+        badge: "à²¶à³ˆà²•à³à²·à²£à²¿à²• à²¸à²¿à²®à³à²¯à³à²²à³‡à²¶à²¨à³",
+        banner: "à²ˆ à²¸à²¿à²®à³à²¯à³à²²à³‡à²Ÿà²°à³ à²¨à³ˆà²œ à²®à²¤à²µà²¨à³à²¨à³ à²šà²²à²¾à²¯à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²². à²¯à²¾à²µà³à²¦à³‡ à²¨à³ˆà²œ à²µà²¿à²µà²°à²—à²³à²¨à³à²¨à³ à²¸à²‚à²—à³à²°à²¹à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²².",
+        introTitle: "à²®à²¤à²¦à²¾à²¨ à²ªà³à²°à²•à³à²°à²¿à²¯à³†à²¯ à²…à²¨à³à²­à²µ",
+        introDesc: "à²®à²¤à²¦à²¾à²¨ à²•à³Šà² à²¡à²¿à²¯à³Šà²³à²—à³† à²à²¨à²¾à²—à³à²¤à³à²¤à²¦à³† à²Žà²‚à²¬à³à²¦à²¨à³à²¨à³ à²¤à²¿à²³à²¿à²¦à³à²•à³Šà²³à³à²³à²¿. à²ˆ à²•à²¾à²²à³à²ªà²¨à²¿à²• à²¸à²¿à²®à³à²¯à³à²²à³‡à²¶à²¨à³â€Œà²¨à²²à³à²²à²¿ à²¨à³€à²µà³ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿, à²¨à²¿à²®à³à²® à²†à²¯à³à²•à³† à²®à²¾à²¡à²¿, à²®à²¤ à²Žà²£à²¿à²•à³†à²¯ à²µà²¿à²§à²¾à²¨à²µà²¨à³à²¨à³ à²µà³€à²•à³à²·à²¿à²¸à²¬à²¹à³à²¦à³.",
+        step1Title: "à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à³à²µ à²®à³Šà²¦à²²à³ à²¤à²¿à²³à²¿à²¯à²¿à²°à²¿",
+        step1Points: [
+          "à²®à²¤à²¦à²¾à²¨ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿à²¦à³†: à²¨à²¿à²®à³à²® à²®à²¤à²¦ à²—à³Œà²ªà³à²¯à²¤à³†à²¯à²¨à³à²¨à³ à²•à²¾à²¨à³‚à²¨à³ à²°à²•à³à²·à²¿à²¸à³à²¤à³à²¤à²¦à³†.",
+          "à²…à²°à³à²¹à²¤à³†à²¯à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿: à²¨à³ˆà²œ à²šà³à²¨à²¾à²µà²£à³†à²¯à²²à³à²²à²¿ à²¨à³€à²µà³ à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²¨à³‹à²‚à²¦à²¾à²¯à²¿à²¸à²¿à²°à²¬à³‡à²•à³.",
+          "à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿: à²¯à²¾à²µà³à²¦à³‡ à²…à²­à³à²¯à²°à³à²¥à²¿ à²…à²¥à²µà²¾ à²¨à³‹à²Ÿà²¾ (NOTA) à²µà²¨à³à²¨à³ à²†à²°à²¿à²¸à²¬à²¹à³à²¦à³.",
+          "à²’à²‚à²¦à³‡ à²¸à²²à³à²²à²¿à²•à³†: à²’à²®à³à²®à³† à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à²¿à²¦ à²¨à²‚à²¤à²° à²Žà²°à²¡à²¨à³‡ à²¬à²¾à²°à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²¸à²¾à²§à³à²¯à²µà²¿à²²à³à²²."
+        ],
+        step2Title: "à²®à²¾à²¦à²°à²¿ à²¨à²—à²° à²¸à²­à³† à²šà³à²¨à²¾à²µà²£à³†",
+        step2Sub: "à²’à²¬à³à²¬ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à²¨à³à²¨à³ à²…à²¥à²µà²¾ à²¨à³‹à²Ÿà²¾ à²†à²¯à³à²•à³†à²®à²¾à²¡à²¿. à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à³à²µ à²®à³Šà²¦à²²à³ à²¨à²¿à²®à³à²® à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²¬à²¦à²²à²¾à²¯à²¿à²¸à²¬à²¹à³à²¦à³.",
+        btnStart: "à²®à²¾à²¦à²°à²¿ à²®à²¤à²¦à²¾à²¨ à²ªà³à²°à²¾à²°à²‚à²­à²¿à²¸à²¿",
+        btnReview: "à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿",
+        btnBack: "à²†à²¯à³à²•à³† à²¬à²¦à²²à²¾à²¯à²¿à²¸à²¿",
+        btnConfirm: "à²®à²¾à²¦à²°à²¿ à²®à²¤ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à²¿",
+        btnTryAgain: "à²®à²¤à³à²¤à³Šà²®à³à²®à³† à²ªà³à²°à²¯à²¤à³à²¨à²¿à²¸à²¿",
+        btnResetAll: "à²Žà²²à³à²²à²¾ à²®à²¾à²¦à²°à²¿ à²®à²¤ à²®à²°à³à²¹à³Šà²‚à²¦à²¿à²¸à²¿",
+        reviewTitle: "à²¨à²¿à²®à³à²® à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿",
+        reviewDesc: "à²¦à²¯à²µà²¿à²Ÿà³à²Ÿà³ à²¨à²¿à²®à³à²® à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²Žà²šà³à²šà²°à²¿à²•à³†à²¯à²¿à²‚à²¦ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿. à²¨à³ˆà²œ à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²²à³à²²à²¿ à²’à²®à³à²®à³† à²šà²²à²¾à²¯à²¿à²¸à²¿à²¦ à²®à²¤à²µà²¨à³à²¨à³ à²¬à²¦à²²à²¾à²¯à²¿à²¸à²²à³ à²¸à²¾à²§à³à²¯à²µà²¿à²²à³à²².",
+        selectedCandidate: "à²¨à³€à²µà³ à²†à²¯à³à²•à³† à²®à²¾à²¡à²¿à²¦ à²…à²­à³à²¯à²°à³à²¥à²¿:",
+        confirmSuccessTitle: "à²®à²¾à²¦à²°à²¿ à²®à²¤ à²¦à²¾à²–à²²à²¾à²—à²¿à²¦à³†",
+        confirmSuccessDesc: "à²¨à²¿à²®à³à²® à²•à²¾à²²à³à²ªà²¨à²¿à²• à²®à²¤ à²¯à²¶à²¸à³à²µà²¿à²¯à²¾à²—à²¿ à²¦à²¾à²–à²²à²¾à²—à²¿à²¦à³†. VVPAT à²¹à³Šà²‚à²¦à²¿à²°à³à²µ à²¨à³ˆà²œ à²šà³à²¨à²¾à²µà²£à³†à²¯à²²à³à²²à²¿, à²¨à²¿à²®à³à²® à²†à²¯à³à²•à³†à²¯à²¨à³à²¨à³ à²¦à³ƒà²¢à³€à²•à²°à²¿à²¸à²²à³ à²•à²¾à²—à²¦à²¦ à²šà³€à²Ÿà²¿à²¯à³ 7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²—à³‹à²šà²°à²¿à²¸à³à²¤à³à²¤à²¦à³†.",
+        countingTitle: "à²®à²¾à²¦à²°à²¿ à²®à²¤ à²Žà²£à²¿à²•à³†",
+        countingDesc: "à²®à²¾à²¦à²°à²¿ à²®à²¤à²¯à²‚à²¤à³à²°à²¦à²¿à²‚à²¦ à²®à²¤à²—à²³à³ à²¹à³‡à²—à³† à²¸à³à²°à²•à³à²·à²¿à²¤à²µà²¾à²—à²¿ à²’à²Ÿà³à²Ÿà³à²—à³‚à²¡à³à²¤à³à²¤à²µà³† à²Žà²‚à²¬à³à²¦à²¨à³à²¨à³ à²—à²®à²¨à²¿à²¸à²¿.",
+        resultsTitle: "à²®à²¾à²¦à²°à²¿ à²šà³à²¨à²¾à²µà²£à²¾ à²«à²²à²¿à²¤à²¾à²‚à²¶à²—à²³à³",
+        resultsSub: "à²ˆ à²¡à³†à²®à³Šà²¦à²²à³à²²à²¿ à²¦à²¾à²–à²²à²¾à²¦ à²’à²Ÿà³à²Ÿà³ à²®à²¾à²¦à²°à²¿ à²®à²¤à²—à²³ à²«à²²à²¿à²¤à²¾à²‚à²¶.",
+        totalVotesCast: "à²’à²Ÿà³à²Ÿà³ à²šà²²à²¾à²¯à²¿à²¸à²¿à²¦ à²®à²¾à²¦à²°à²¿ à²®à²¤à²—à²³à³",
+        leadingCandidate: "à²®à³à²¨à³à²¨à²¡à³† à²¸à²¾à²§à²¿à²¸à²¿à²¦à²µà²°à³",
+        notaNote: "à²¨à³‹à²Ÿà²¾ (NOTA) à²…à²¤à³ƒà²ªà³à²¤à²¿à²¯à²¨à³à²¨à³ à²µà³à²¯à²•à³à²¤à²ªà²¡à²¿à²¸à³à²µ à²¹à²•à³à²•à³ à²®à²¤à³à²¤à³ à²®à²¤à²¦à²¾à²¨à²¦à²²à³à²²à²¿ à²¨à²¿à²®à³à²® à²‰à²ªà²¸à³à²¥à²¿à²¤à²¿à²¯à²¨à³à²¨à³ à²¦à³ƒà²¢à³€à²•à²°à²¿à²¸à³à²¤à³à²¤à²¦à³†."
+      },
+      ai: {
+        title: "à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ à²Žà² à²•à³‡à²³à²¿ (Ask ELECTRA AI)",
+        subtitle: "à²šà³à²¨à²¾à²µà²£à³† à²®à²¤à³à²¤à³ à²ªà³à²°à²œà²¾à²¸à²¤à³à²¤à²¾à²¤à³à²®à²• à²¨à²¿à²¯à²®à²—à²³ à²¬à²—à³à²—à³† à²¤à²Ÿà²¸à³à²¥ à²¹à²¾à²—à³‚ à²…à²§à²¿à²•à³ƒà²¤ à²®à²¾à²¹à²¿à²¤à²¿.",
+        modeSimple: "à²¸à²°à²³ à²µà²¿à²µà²°à²£à³†",
+        modeDetailed: "à²¸à²®à²—à³à²° à²µà²¿à²µà²°à²£à³†",
+        placeholder: "à²šà³à²¨à²¾à²µà²£à³†, à²®à²¤à²¦à²¾à²¨ à²…à²¥à²µà²¾ à²Žà²£à²¿à²•à³†à²¯ à²¬à²—à³à²—à³† à²¯à²¾à²µà³à²¦à³‡ à²ªà³à²°à²¶à³à²¨à³† à²•à³‡à²³à²¿...",
+        btnAsk: "à²ªà³à²°à²¶à³à²¨à³† à²•à³‡à²³à²¿",
+        exampleQueriesLabel: "à²¸à²¾à²®à²¾à²¨à³à²¯ à²ªà³à²°à²¶à³à²¨à³†à²—à²³à³:",
+        shortAnswer: "à²¸à²‚à²•à³à²·à²¿à²ªà³à²¤ à²‰à²¤à³à²¤à²°",
+        howItWorks: "à²‡à²¦à³ à²¹à³‡à²—à³† à²•à²¾à²°à³à²¯à²¨à²¿à²°à³à²µà²¹à²¿à²¸à³à²¤à³à²¤à²¦à³†",
+        relatedTopics: "à²¸à²‚à²¬à²‚à²§à²¿à²¤ à²µà²¿à²·à²¯à²—à²³à³",
+        sources: "à²ªà²°à²¿à²¶à³€à²²à²¿à²¤ à²®à³‚à²²à²—à²³à³",
+        neutralityNotice: "à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ à²Žà² à²•à³‡à²µà²² à²¤à²Ÿà²¸à³à²¥ à²¶à³ˆà²•à³à²·à²£à²¿à²• à²®à²¾à²¹à²¿à²¤à²¿à²¯à²¨à³à²¨à³ à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†. à²¯à²¾à²µà³à²¦à³‡ à²ªà²•à³à²· à²…à²¥à²µà²¾ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à²¨à³à²¨à³ à²¬à³†à²‚à²¬à²²à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²².",
+        fallbackNotice: "à²¸à³à²¥à²³à³€à²¯ à²ªà²°à²¿à²¶à³€à²²à²¿à²¤ à²œà³à²žà²¾à²¨ à²Žà²‚à²œà²¿à²¨à³â€Œà²¨à²²à³à²²à²¿ à²šà²²à²¿à²¸à³à²¤à³à²¤à²¿à²¦à³† (à²¯à²¾à²µà³à²¦à³‡ à²¬à²¾à²¹à³à²¯ API à²…à²—à²¤à³à²¯à²µà²¿à²²à³à²²)."
+      },
+      quiz: {
+        title: "à²¨à²¾à²—à²°à²¿à²• à²œà³à²žà²¾à²¨ à²°à²¸à²ªà³à²°à²¶à³à²¨à³†",
+        subtitle: "à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²•à³à²°à²¿à²¯à³† à²®à²¤à³à²¤à³ à²¨à²¿à²®à³à²® à²¹à²•à³à²•à³à²—à²³ à²¬à²—à³à²—à³† à²¨à²¿à²®à³à²® à²œà³à²žà²¾à²¨à²µà²¨à³à²¨à³ à²ªà²°à³€à²•à³à²·à²¿à²¸à²¿.",
+        questionOf: "à²ªà³à²°à²¶à³à²¨à³†",
+        nextBtn: "à²®à³à²‚à²¦à²¿à²¨ à²ªà³à²°à²¶à³à²¨à³†",
+        seeResultsBtn: "à²«à²²à²¿à²¤à²¾à²‚à²¶à²—à²³à²¨à³à²¨à³ à²¨à³‹à²¡à²¿",
+        retakeBtn: "à²®à²¤à³à²¤à³† à²ªà³à²°à²¯à²¤à³à²¨à²¿à²¸à²¿",
+        scoreTitle: "à²¨à²¿à²®à³à²® à²…à²‚à²•à²—à²³à³",
+        reviewLabel: "à²µà²¿à²µà²°à²£à³† à²®à²¤à³à²¤à³ à²ªà²°à²¿à²¶à³€à²²à²¨à³†",
+        certifiedBadge: "à²ªà³à²°à²®à²¾à²£à³€à²•à³ƒà²¤ à²œà²¾à²—à³ƒà²¤ à²®à²¤à²¦à²¾à²°",
+        perfectScore: "à²…à²¦à³à²­à³à²¤! à²¨à³€à²µà³ à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²•à³à²°à²¿à²¯à³†à²¯ à²¬à²—à³à²—à³† à²¸à²‚à²ªà³‚à²°à³à²£ à²œà³à²žà²¾à²¨ à²¹à³Šà²‚à²¦à²¿à²¦à³à²¦à³€à²°à²¿.",
+        goodScore: "à²‰à²¤à³à²¤à²® à²ªà³à²°à²¯à²¤à³à²¨! à²¨à²¿à²®à³à²® à²¨à²¾à²—à²°à²¿à²• à²¹à²•à³à²•à³à²—à²³ à²¬à²—à³à²—à³† à²‰à²¤à³à²¤à²® à²¤à²¿à²³à³à²µà²³à²¿à²•à³† à²‡à²¦à³†.",
+        practiceScore: "à²®à³à²‚à²¦à³à²µà²°à²¿à²¸à²¿! à²‡à²¨à³à²¨à²·à³à²Ÿà³ à²•à²²à²¿à²¯à²²à³ à²¹à²‚à²¤à²—à²³à³ à²®à²¤à³à²¤à³ à²¶à²¬à³à²¦à²•à³‹à²¶à²µà²¨à³à²¨à³ à²…à²¨à³à²µà³‡à²·à²¿à²¸à²¿."
+      },
+      mythFact: {
+        title: "à²®à²¿à²¥à³à²¯ vs à²¸à²¤à³à²¯ (Myth or Fact)",
+        subtitle: "à²šà³à²¨à²¾à²µà²£à³†à²¯ à²¬à²—à³à²—à³† à²¹à²°à²¡à³à²µ à²¸à³à²³à³à²³à³ à²¸à³à²¦à³à²¦à²¿à²—à²³à²¨à³à²¨à³ à²¸à²°à²¿à²ªà²¡à²¿à²¸à²¿ à²®à²¤à³à²¤à³ à²…à²§à²¿à²•à³ƒà²¤ à²¨à²¿à²¯à²®à²—à²³à²¨à³à²¨à³ à²¤à²¿à²³à²¿à²¯à²¿à²°à²¿.",
+        badgeFact: "à²¦à³ƒà²¢à³€à²•à³ƒà²¤ à²¸à²¤à³à²¯",
+        badgeMyth: "à²¸à³à²³à³à²³à³ à²•à²²à³à²ªà²¨à³† (à²®à²¿à²¥à³à²¯)",
+        btnCheck: "à²¸à²¤à³à²¯à²µà²¨à³à²¨à³ à²¤à²¿à²³à²¿à²¯à²¿à²°à²¿",
+        filterAll: "à²Žà²²à³à²²à²¾ à²µà²¿à²·à²¯à²—à²³à³",
+        officialSource: "à²®à³‚à²²"
+      },
+      glossary: {
+        title: "à²œà³à²žà²¾à²¨ à²­à²‚à²¡à²¾à²° à²®à²¤à³à²¤à³ à²¶à²¬à³à²¦à²•à³‹à²¶",
+        subtitle: "à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²•à³à²°à²¿à²¯à³†à²¯ à²ªà³à²°à²®à³à²– à²ªà²¦à²—à²³ à²¸à³à²ªà²·à³à²Ÿ à²®à²¤à³à²¤à³ à²¸à³à²²à²­ à²µà²¿à²µà²°à²£à³†.",
+        searchPlaceholder: "à²ªà²¦à²—à²³à²¨à³à²¨à³ à²¹à³à²¡à³à²•à²¿ (à²‰à²¦à²¾: EVM, NOTA, à²®à²¤à²—à²Ÿà³à²Ÿà³†, à²¨à²¾à²®à²ªà²¤à³à²°)...",
+        allCategories: "à²Žà²²à³à²²à²¾ à²µà²°à³à²—à²—à²³à³",
+        categories: {
+          basics: "à²®à³‚à²²à²­à³‚à²¤ à²µà²¿à²·à²¯à²—à²³à³",
+          voting: "à²®à²¤à²¦à²¾à²¨ à²®à²¤à³à²¤à³ à²®à²¤à²—à²Ÿà³à²Ÿà³†",
+          process: "à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²•à³à²°à²¿à²¯à³†",
+          counting: "à²Žà²£à²¿à²•à³† à²®à²¤à³à²¤à³ à²«à²²à²¿à²¤à²¾à²‚à²¶",
+          terminology: "à²ªà²¾à²°à²¿à²­à²¾à²·à²¿à²• à²ªà²¦à²—à²³à³",
+          faqs: "à²¸à²¾à²®à²¾à²¨à³à²¯ à²ªà³à²°à²¶à³à²¨à³†à²—à²³à³"
+        },
+        recentlyViewed: "à²‡à²¤à³à²¤à³€à²šà³†à²—à³† à²¨à³‹à²¡à²¿à²¦ à²ªà²¦à²—à²³à³",
+        whyItMatters: "à²®à²¤à²¦à²¾à²°à²°à²¿à²—à³† à²‡à²¦à³ à²à²•à³† à²®à³à²–à³à²¯",
+        related: "à²¸à²‚à²¬à²‚à²§à²¿à²¤ à²ªà²¦à²—à²³à³",
+        noResults: "à²¯à²¾à²µà³à²¦à³‡ à²«à²²à²¿à²¤à²¾à²‚à²¶ à²•à²‚à²¡à³à²¬à²‚à²¦à²¿à²²à³à²²."
+      },
+      a11y: {
+        title: "à²ªà³à²°à²µà³‡à²¶à²¿à²¸à³à²µà²¿à²•à³† à²¨à²¿à²¯à²‚à²¤à³à²°à²£à²—à²³à³",
+        fontSize: "à²ªà² à³à²¯à²¦ à²—à²¾à²¤à³à²°",
+        fontSizeDesc: "à²“à²¦à²²à³ à²…à²¨à³à²•à³‚à²²à²•à²°à²µà²¾à²—à²¿ à²ªà² à³à²¯à²¦ à²—à²¾à²¤à³à²°à²µà²¨à³à²¨à³ à²¹à³Šà²‚à²¦à²¿à²¸à²¿.",
+        contrast: "à²¹à³†à²šà³à²šà²¿à²¨ à²•à²¾à²‚à²Ÿà³à²°à²¾à²¸à³à²Ÿà³ à²®à³‹à²¡à³",
+        contrastDesc: "à²‰à²¤à³à²¤à²® à²—à³‹à²šà²°à²¤à³†à²—à²¾à²—à²¿ à²—à²¡à²¿à²—à²³à³ à²®à²¤à³à²¤à³ à²¹à²¿à²¨à³à²¨à³†à²²à³†à²¯à²¨à³à²¨à³ à²µà²°à³à²§à²¿à²¸à²¿.",
+        motion: "à²•à²¡à²¿à²®à³† à²šà²²à²¨à³† (Reduced Motion)",
+        motionDesc: "à²†à²¨à²¿à²®à³‡à²·à²¨à³â€Œà²—à²³à²¨à³à²¨à³ à²¨à²¿à²·à³à²•à³à²°à²¿à²¯à²—à³Šà²³à²¿à²¸à²¿.",
+        reset: "à²®à²°à³à²¹à³Šà²‚à²¦à²¿à²¸à²¿"
+      }
+    }
+  };
+
+  /* =========================================================================
+     2. DATASETS (STAGES, GLOSSARY, QUIZ, MYTHS, AI)
+     ========================================================================= */
+  const electionStages = [
+    {
+      id: 'announcement',
+      order: 1,
+      phase: 'before',
+      title: { en: '1. Election Announcement', kn: '1. à²šà³à²¨à²¾à²µà²£à²¾ à²…à²§à²¿à²¸à³‚à²šà²¨à³† (Announcement)' },
+      shortDesc: {
+        en: 'The election commission issues the formal notification, dates, and enforces the Model Code of Conduct.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾ à²†à²¯à³‹à²—à²µà³ à²…à²§à²¿à²•à³ƒà²¤ à²µà³‡à²³à²¾à²ªà²Ÿà³à²Ÿà²¿à²¯à²¨à³à²¨à³ à²ªà³à²°à²•à²Ÿà²¿à²¸à³à²¤à³à²¤à²¦à³† à²®à²¤à³à²¤à³ à²¨à³€à²¤à²¿ à²¸à²‚à²¹à²¿à²¤à³†à²¯à²¨à³à²¨à³ à²œà²¾à²°à²¿à²—à³Šà²³à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      whatHappens: {
+        en: 'The official election schedule is declared. Dates for nominations, polling, and counting are established. The Model Code of Conduct (MCC) comes into immediate effect to ensure a level playing field between ruling and opposition parties.',
+        kn: 'à²…à²§à²¿à²•à³ƒà²¤ à²šà³à²¨à²¾à²µà²£à²¾ à²µà³‡à²³à²¾à²ªà²Ÿà³à²Ÿà²¿à²¯à²¨à³à²¨à³ à²ªà³à²°à²•à²Ÿà²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†. à²¨à²¾à²®à²ªà²¤à³à²°, à²®à²¤à²¦à²¾à²¨ à²®à²¤à³à²¤à³ à²Žà²£à²¿à²•à³†à²¯ à²¦à²¿à²¨à²¾à²‚à²•à²—à²³à²¨à³à²¨à³ à²¨à²¿à²—à²¦à²¿à²ªà²¡à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†. à²®à²¾à²¦à²°à²¿ à²¨à³€à²¤à²¿ à²¸à²‚à²¹à²¿à²¤à³† à²œà²¾à²°à²¿à²—à³† à²¬à²°à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'Prevents misuse of official government machinery or arbitrary policy decisions designed to unfairly influence voters right before an election.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à³†à²¯ à²®à³à²¨à³à²¨ à²®à²¤à²¦à²¾à²°à²°à²¨à³à²¨à³ à²ªà³à²°à²­à²¾à²µà²¿à²¸à²²à³ à²¸à²°à³à²•à²¾à²°à²¿ à²¯à²‚à²¤à³à²° à²…à²¥à²µà²¾ à²¨à³€à²¤à²¿à²—à²³ à²¦à³à²°à³à²ªà²¯à³‹à²—à²µà²¨à³à²¨à³ à²‡à²¦à³ à²¤à²¡à³†à²¯à³à²¤à³à²¤à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Election Commission / Electoral Authority, political parties, government officials, and citizens.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾ à²†à²¯à³‹à²—, à²°à²¾à²œà²•à³€à²¯ à²ªà²•à³à²·à²—à²³à³, à²¸à²°à³à²•à²¾à²°à²¿ à²…à²§à²¿à²•à²¾à²°à²¿à²—à²³à³ à²®à²¤à³à²¤à³ à²¨à²¾à²—à²°à²¿à²•à²°à³.'
+      },
+      rules: [
+        {
+          en: 'Model Code of Conduct prohibits the announcement of new financial grants or projects by the incumbent government.',
+          kn: 'à²¹à²¾à²²à²¿ à²¸à²°à³à²•à²¾à²°à²µà³ à²¹à³Šà²¸ à²†à²°à³à²¥à²¿à²• à²¯à³‹à²œà²¨à³†à²—à²³à³ à²…à²¥à²µà²¾ à²…à²¨à³à²¦à²¾à²¨à²—à²³à²¨à³à²¨à³ à²˜à³‹à²·à²¿à²¸à³à²µà³à²¦à²¨à³à²¨à³ à²¨à³€à²¤à²¿ à²¸à²‚à²¹à²¿à²¤à³† à²¨à²¿à²·à³‡à²§à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+        },
+        {
+          en: 'Ministers cannot combine official visits with election campaigning.',
+          kn: 'à²¸à²šà²¿à²µà²°à³ à²…à²§à²¿à²•à³ƒà²¤ à²ªà³à²°à²µà²¾à²¸à²—à²³à²¨à³à²¨à³ à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²šà²¾à²°à²¦à³Šà²‚à²¦à²¿à²—à³† à²¸à²‚à²¯à³‹à²œà²¿à²¸à³à²µà²‚à²¤à²¿à²²à³à²².'
+        }
+      ],
+      terms: ['Model Code of Conduct', 'Electoral Roll', 'Returning Officer'],
+      sources: [{ title: 'Representation of the People Act, Section 30' }]
+    },
+    {
+      id: 'nomination',
+      order: 2,
+      phase: 'before',
+      title: { en: '2. Filing of Nomination', kn: '2. à²¨à²¾à²®à²ªà²¤à³à²° à²¸à²²à³à²²à²¿à²•à³† (Nomination)' },
+      shortDesc: {
+        en: 'Candidates submit formal candidacy papers, affidavits disclosing assets/criminal records, and security deposits.',
+        kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³ à²¤à²®à³à²® à²¨à²¾à²®à²ªà²¤à³à²°, à²†à²¸à³à²¤à²¿ à²®à²¤à³à²¤à³ à²•à³à²°à²¿à²®à²¿à²¨à²²à³ à²¹à²¿à²¨à³à²¨à³†à²²à³†à²¯ à²…à²«à²¿à²¡à²µà²¿à²Ÿà³ à²®à²¤à³à²¤à³ à² à³‡à²µà²£à²¿à²¯à²¨à³à²¨à³ à²¸à²²à³à²²à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      whatHappens: {
+        en: 'Individuals eligible to contest submit their nomination papers to the Returning Officer (RO) before the published deadline. Candidates submit sworn affidavits (Form 26) disclosing educational qualifications, assets, liabilities, and any pending criminal cases.',
+        kn: 'à²…à²°à³à²¹ à²µà³à²¯à²•à³à²¤à²¿à²—à²³à³ à²¨à²¿à²—à²¦à²¿à²¤ à²—à²¡à³à²µà²¿à²¨à³Šà²³à²—à³† à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²—à³† (RO) à²¨à²¾à²®à²ªà²¤à³à²°à²—à²³à²¨à³à²¨à³ à²¸à²²à³à²²à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†. à²†à²¸à³à²¤à²¿-à²ªà²¾à²¸à³à²¤à²¿ à²®à²¤à³à²¤à³ à²…à²ªà²°à²¾à²§ à²¹à²¿à²¨à³à²¨à³†à²²à³†à²¯ à²…à²«à²¿à²¡à²µà²¿à²Ÿà³ à²¸à²²à³à²²à²¿à²¸à³à²µà³à²¦à³ à²•à²¡à³à²¡à²¾à²¯.'
+      },
+      whyItMatters: {
+        en: 'Ensures radical transparency. Voters have a constitutional right to know the background and financial standing of candidates contesting for public office.',
+        kn: 'à²ªà³‚à²°à³à²£ à²ªà²¾à²°à²¦à²°à³à²¶à²•à²¤à³†à²¯à²¨à³à²¨à³ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¦à³†. à²¸à³à²ªà²°à³à²§à²¿à²¸à³à²µ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯ à²¹à²¿à²¨à³à²¨à³†à²²à³† à²¤à²¿à²³à²¿à²¯à³à²µ à²¹à²•à³à²•à³ à²®à²¤à²¦à²¾à²°à²°à²¿à²—à²¿à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Contesting candidates, proposers (registered voters), and Returning Officer.',
+        kn: 'à²¸à³à²ªà²°à³à²§à²¿à²¸à³à²µ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³, à²¸à³‚à²šà²•à²°à³ à²®à²¤à³à²¤à³ à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿.'
+      },
+      rules: [
+        {
+          en: 'Candidates must pay a statutory security deposit (forfeited if they fail to secure 1/6th of total valid votes).',
+          kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³ à²­à²¦à³à²°à²¤à²¾ à² à³‡à²µà²£à²¿ à²ªà²¾à²µà²¤à²¿à²¸à²¬à³‡à²•à³ (1/6 à²•à³à²•à²¿à²‚à²¤ à²•à²¡à²¿à²®à³† à²®à²¤ à²¬à²‚à²¦à²°à³† à²®à³à²Ÿà³à²Ÿà³à²—à³‹à²²à³).'
+        }
+      ],
+      terms: ['Returning Officer', 'Affidavit', 'Security Deposit'],
+      sources: [{ title: 'Affidavit Transparency Framework (Supreme Court Ruling)' }]
+    },
+    {
+      id: 'scrutiny',
+      order: 3,
+      phase: 'before',
+      title: { en: '3. Scrutiny & Withdrawal', kn: '3. à²ªà²°à²¿à²¶à³€à²²à²¨à³† à²®à²¤à³à²¤à³ à²¹à²¿à²‚à²ªà²¡à³†à²¯à³à²µà²¿à²•à³† (Scrutiny)' },
+      shortDesc: {
+        en: 'The Returning Officer inspects all submitted papers. Valid candidates are finalized after the withdrawal window.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²Žà²²à³à²²à²¾ à²¨à²¾à²®à²ªà²¤à³à²°à²—à²³à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à³à²¤à³à²¤à²¾à²°à³† à²®à²¤à³à²¤à³ à²…à²‚à²¤à²¿à²® à²ªà²Ÿà³à²Ÿà²¿à²¯à²¨à³à²¨à³ à²¸à²¿à²¦à³à²§à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      whatHappens: {
+        en: 'The Returning Officer examines each nomination paper in the presence of candidates and their authorized agents. Invalid papers (e.g. under-age, incomplete affidavits, lack of genuine proposers) are rejected. Valid candidates are given a formal window to withdraw candidacy.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³ à²¸à²®à³à²®à³à²–à²¦à²²à³à²²à²¿ à²¨à²¾à²®à²ªà²¤à³à²°à²—à²³à²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†. à²…à²ªà³‚à²°à³à²£ à²…à²¥à²µà²¾ à²…à²¨à²°à³à²¹ à²ªà²¤à³à²°à²—à²³à²¨à³à²¨à³ à²¤à²¿à²°à²¸à³à²•à²°à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'Guarantees that only legally qualified individuals appear on the ballot paper, preventing fraud and ballot crowding.',
+        kn: 'à²•à³‡à²µà²² à²…à²°à³à²¹ à²µà³à²¯à²•à³à²¤à²¿à²—à²³à³ à²®à²¾à²¤à³à²° à²®à²¤à²ªà²¤à³à²°à²¦à²²à³à²²à²¿ à²‡à²°à³à²µà³à²¦à²¨à³à²¨à³ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Returning Officer, contesting candidates, election legal observers.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿, à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³ à²®à²¤à³à²¤à³ à²•à²¾à²¨à³‚à²¨à³ à²µà³€à²•à³à²·à²•à²°à³.'
+      },
+      rules: [
+        {
+          en: 'Rejection reasons must be recorded in writing by the Returning Officer.',
+          kn: 'à²¨à²¾à²®à²ªà²¤à³à²° à²¤à²¿à²°à²¸à³à²•à²°à²¿à²¸à²²à³ à²•à²¾à²°à²£à²µà²¨à³à²¨à³ à²²à²¿à²–à²¿à²¤à²µà²¾à²—à²¿ à²¦à²¾à²–à²²à²¿à²¸à²¬à³‡à²•à³.'
+        }
+      ],
+      terms: ['Scrutiny', 'Withdrawal of Candidature'],
+      sources: [{ title: 'Statutory Rules on Scrutiny (ECI Handbooks)' }]
+    },
+    {
+      id: 'campaign',
+      order: 4,
+      phase: 'before',
+      title: { en: '4. Campaign Period & Silence Window', kn: '4. à²ªà³à²°à²šà²¾à²° à²…à²µà²§à²¿ à²®à²¤à³à²¤à³ à²®à³Œà²¨ à²…à²µà²§à²¿ (Campaign)' },
+      shortDesc: {
+        en: 'Candidates present manifestos and visions. All campaigning strictly ends 48 hours before polling closes.',
+        kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³ à²ªà³à²°à²£à²¾à²³à²¿à²•à³†à²¯à²¨à³à²¨à³ à²ªà³à²°à²¸à³à²¤à³à²¤à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†. à²®à²¤à²¦à²¾à²¨ à²®à³à²•à³à²¤à²¾à²¯à²•à³à²•à³† 48 à²—à²‚à²Ÿà³†à²—à²³ à²®à³à²¨à³à²¨ à²ªà³à²°à²šà²¾à²°à²µà³ à²•à³Šà²¨à³†à²—à³Šà²³à³à²³à³à²¤à³à²¤à²¦à³†.'
+      },
+      whatHappens: {
+        en: 'Candidates campaign through public rallies, door-to-door outreach, and digital platforms. Exactly 48 hours before the close of poll, the "Silence Period" begins: all public rallies, loudspeaker campaigning, and political advertisements must cease.',
+        kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³ à²¸à²¾à²°à³à²µà²œà²¨à²¿à²• à²¸à²­à³†à²—à²³ à²®à³‚à²²à²• à²ªà³à²°à²šà²¾à²° à²®à²¾à²¡à³à²¤à³à²¤à²¾à²°à³†. à²®à²¤à²¦à²¾à²¨ à²®à³à²•à³à²¤à²¾à²¯à²•à³à²•à³† 48 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³ "à²®à³Œà²¨ à²…à²µà²§à²¿" à²ªà³à²°à²¾à²°à²‚à²­à²µà²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'The 48-hour silence period provides voters with peace and mental clarity to reflect on choices without continuous persuasion.',
+        kn: 'à²®à³Œà²¨ à²…à²µà²§à²¿à²¯à³ à²®à²¤à²¦à²¾à²°à²°à²¿à²—à³† à²¯à²¾à²µà³à²¦à³‡ à²ªà³à²°à²­à²¾à²µà²µà²¿à²²à³à²²à²¦à³† à²¶à²¾à²‚à²¤à²µà²¾à²—à²¿ à²¯à³‹à²šà²¿à²¸à²¿ à²¤à³€à²°à³à²®à²¾à²¨à²¿à²¸à²²à³ à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Voters, political parties, media, expenditure observers.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²°à³, à²°à²¾à²œà²•à³€à²¯ à²ªà²•à³à²·à²—à²³à³, à²®à²¾à²§à³à²¯à²®à²—à²³à³ à²®à²¤à³à²¤à³ à²µà³†à²šà³à²š à²µà³€à²•à³à²·à²•à²°à³.'
+      },
+      rules: [
+        {
+          en: 'No appeals to voters on communal, religious, or caste grounds are permitted.',
+          kn: 'à²§à²°à³à²® à²…à²¥à²µà²¾ à²œà²¾à²¤à²¿ à²†à²§à²¾à²°à²¦ à²®à³‡à²²à³† à²®à²¤ à²•à³‡à²³à³à²µà³à²¦à²¨à³à²¨à³ à²•à²Ÿà³à²Ÿà³à²¨à²¿à²Ÿà³à²Ÿà²¾à²—à²¿ à²¨à²¿à²·à³‡à²§à²¿à²¸à²²à²¾à²—à²¿à²¦à³†.'
+        }
+      ],
+      terms: ['Silence Period', 'Manifesto'],
+      sources: [{ title: 'Section 126 of Representation of the People Act' }]
+    },
+    {
+      id: 'polling',
+      order: 5,
+      phase: 'during',
+      title: { en: '5. Polling Day: Casting the Vote', kn: '5. à²®à²¤à²¦à²¾à²¨à²¦ à²¦à²¿à²¨: à²®à²¤ à²šà²²à²¾à²µà²£à³† (Polling Day)' },
+      shortDesc: {
+        en: 'Voters cast their confidential ballots at assigned polling stations following strict identity checks.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²°à³ à²—à³à²°à³à²¤à²¿à²¨ à²šà³€à²Ÿà²¿ à²ªà²°à²¿à²¶à³€à²²à²¨à³†à²¯ à²¨à²‚à²¤à²° à²¤à²®à³à²® à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²²à³à²²à²¿ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      whatHappens: {
+        en: 'Before voting begins, a mandatory Mock Poll is conducted in front of party agents. At the booth: 1) First polling officer checks the voter list and ID card, 2) Second polling officer applies indelible ink on the left index finger, 3) Third polling officer activates the EVM. The voter presses their choice in complete privacy.',
+        kn: 'à²®à²¤à²¦à²¾à²¨ à²†à²°à²‚à²­à²•à³à²•à³‚ à²®à³à²¨à³à²¨ à²…à²£à²•à³ à²®à²¤à²¦à²¾à²¨ à²¨à²¡à³†à²¸à²¿ à²¯à²‚à²¤à³à²°à²µà²¨à³à²¨à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†. à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²²à³à²²à²¿ à²—à³à²°à³à²¤à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿, à²Žà²¡à²¤à³‹à²°à³ à²¬à³†à²°à²³à²¿à²—à³† à²¶à²¾à²¯à²¿ à²¹à²¾à²•à²¿, à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'Heart of the democratic exercise. Universal adult suffrage guarantees every eligible citizen has exactly one equal vote.',
+        kn: 'à²ªà³à²°à²œà²¾à²ªà³à²°à²­à³à²¤à³à²µà²¦ à²®à³‚à²² à²…à²¡à²¿à²ªà²¾à²¯. à²ªà³à²°à²¤à²¿à²¯à³Šà²¬à³à²¬ à²¨à²¾à²—à²°à²¿à²•à²¨à²¿à²—à³‚ à²¸à²®à²¾à²¨à²µà²¾à²¦ à²’à²‚à²¦à³ à²®à²¤à²¦ à²¹à²•à³à²•à²¿à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Presiding Officer, Polling Officers, Candidate Agents, and Electors.',
+        kn: 'à²®à²¤à²—à²Ÿà³à²Ÿà³† à²…à²§à²¿à²•à²¾à²°à²¿à²—à²³à³, à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³ à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³à³ à²®à²¤à³à²¤à³ à²®à²¤à²¦à²¾à²°à²°à³.'
+      },
+      rules: [
+        {
+          en: 'Photography or mobile phones inside the voting compartment are strictly prohibited.',
+          kn: 'à²®à²¤à²¦à²¾à²¨ à²•à³Šà² à²¡à²¿à²¯à³Šà²³à²—à³† à²®à³Šà²¬à³ˆà²²à³ à²…à²¥à²µà²¾ à²›à²¾à²¯à²¾à²—à³à²°à²¹à²£à²µà²¨à³à²¨à³ à²¨à²¿à²·à³‡à²§à²¿à²¸à²²à²¾à²—à²¿à²¦à³†.'
+        },
+        {
+          en: 'Anyone in the queue at the official closing hour MUST be allowed to vote.',
+          kn: 'à²¸à²®à²¯ à²®à³à²—à²¿à²¦à²¾à²— à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²‚à²¤à²¿à²°à³à²µ à²ªà³à²°à²¤à²¿à²¯à³Šà²¬à³à²¬à²°à²¿à²—à³‚ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à²²à³‡à²¬à³‡à²•à³.'
+        },
+        {
+          en: 'VVPAT slip displays candidate symbol for 7 seconds to verify vote recording.',
+          kn: 'VVPAT à²¸à³à²²à²¿à²ªà³ 7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²—à³‹à²šà²°à²¿à²¸à²¿ à²®à²¤ à²¸à²°à²¿à²¯à²¾à²—à²¿ à²¬à²¿à²¦à³à²¦à²¿à²¦à³† à²Žà²‚à²¦à³ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+        }
+      ],
+      terms: ['Indelible Ink', 'EVM & VVPAT', 'Presiding Officer'],
+      sources: [{ title: 'Handbook for Presiding Officers, ECI' }]
+    },
+    {
+      id: 'counting',
+      order: 6,
+      phase: 'after',
+      title: { en: '6. Vote Counting & Verification', kn: '6. à²®à²¤ à²Žà²£à²¿à²•à³† à²®à²¤à³à²¤à³ à²ªà²°à²¿à²¶à³€à²²à²¨à³† (Counting)' },
+      shortDesc: {
+        en: 'Seals of EVMs and postal ballots are verified in front of counting agents, followed by round-wise tabulation.',
+        kn: 'à²®à²¤à²¯à²‚à²¤à³à²°à²—à²³ à²¸à³€à²²à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿, à²¸à³à²¤à³à²¤à³à²—à²³ à²ªà³à²°à²•à²¾à²° à²®à²¤à²—à²³à²¨à³à²¨à³ à²Žà²£à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      whatHappens: {
+        en: 'On counting day, the strongroom is opened in the presence of observers. Postal ballots are counted first. EVMs are brought out table by table. Unique seal numbers are matched. Results are announced round-by-round and entered into the public tabulation sheet with mandatory sample VVPAT slip matching.',
+        kn: 'à²­à²¦à³à²°à²¤à²¾ à²•à³Šà² à²¡à²¿à²¯à²¨à³à²¨à³ à²µà³€à²•à³à²·à²•à²° à²¸à²®à³à²®à³à²–à²¦à²²à³à²²à²¿ à²¤à³†à²°à³†à²¦à³, à²…à²‚à²šà³† à²®à²¤à²—à²³à³ à²®à²¤à³à²¤à³ à²‡à²µà²¿à²Žà²‚ à²®à²¤à²—à²³à²¨à³à²¨à³ à²¸à³à²¤à³à²¤à³à²—à²³ à²ªà³à²°à²•à²¾à²° à²Žà²£à²¿à²•à³† à²®à²¾à²¡à²¿ à²¸à²¾à²°à³à²µà²œà²¨à²¿à²•à²µà²¾à²—à²¿ à²ªà³à²°à²•à²Ÿà²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'Establishes incontrovertible public trust and auditability in the final will of the electorate.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²° à²¤à³€à²°à³à²ªà²¿à²¨ à²®à³‡à²²à³† à²¸à²‚à²ªà³‚à²°à³à²£ à²¸à²¾à²°à³à²µà²œà²¨à²¿à²• à²µà²¿à²¶à³à²µà²¾à²¸ à²®à²¤à³à²¤à³ à²ªà²¾à²°à²¦à²°à³à²¶à²•à²¤à³†à²¯à²¨à³à²¨à³ à²®à³‚à²¡à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      whoIsInvolved: {
+        en: 'Returning Officer, Counting Supervisors, Micro-observers, Candidate Counting Agents.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿, à²Žà²£à²¿à²•à³† à²®à³‡à²²à³à²µà²¿à²šà²¾à²°à²•à²°à³ à²®à²¤à³à²¤à³ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³ à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³à³.'
+      },
+      rules: [
+        {
+          en: 'Round-wise results are signed by candidate agents and uploaded to the official portal.',
+          kn: 'à²ªà³à²°à²¤à²¿ à²¸à³à²¤à³à²¤à²¿à²¨ à²«à²²à²¿à²¤à²¾à²‚à²¶à²•à³à²•à³† à²à²œà³†à²‚à²Ÿà²° à²¸à²¹à²¿ à²ªà²¡à³†à²¦à³ à²…à²§à²¿à²•à³ƒà²¤ à²ªà³‹à²°à³à²Ÿà²²à³â€Œà²¨à²²à³à²²à²¿ à²ªà³à²°à²•à²Ÿà²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+        }
+      ],
+      terms: ['Strongroom', 'Control Unit', 'Tabulation Sheet'],
+      sources: [{ title: 'Guidelines for Counting of Votes (ECI Protocol)' }]
+    },
+    {
+      id: 'results',
+      order: 7,
+      phase: 'after',
+      title: { en: '7. Declaration of Results', kn: '7. à²«à²²à²¿à²¤à²¾à²‚à²¶ à²˜à³‹à²·à²£à³† (Declaration)' },
+      shortDesc: {
+        en: 'The Returning Officer formally declares the winner and awards the Certificate of Election.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²µà²¿à²œà³‡à²¤à²°à²¨à³à²¨à³ à²…à²§à²¿à²•à³ƒà²¤à²µà²¾à²—à²¿ à²˜à³‹à²·à²¿à²¸à³à²¤à³à²¤à²¾à²°à³† à²®à²¤à³à²¤à³ à²ªà³à²°à²®à²¾à²£à²ªà²¤à³à²°à²µà²¨à³à²¨à³ à²¨à³€à²¡à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      whatHappens: {
+        en: 'After all rounds and audits are certified, the Returning Officer signs the Declaration of Result. The winning candidate receives Form 22 (Certificate of Election). If victory margins are extremely close, candidates may apply for a re-count under prescribed statutory conditions.',
+        kn: 'à²Žà²²à³à²²à²¾ à²¸à³à²¤à³à²¤à³à²—à²³à³ à²®à³à²—à²¿à²¦ à²¨à²‚à²¤à²°, à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²«à²²à²¿à²¤à²¾à²‚à²¶ à²˜à³‹à²·à²¿à²¸à²¿ à²µà²¿à²œà³‡à²¤ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à³† à²ªà³à²°à²®à²¾à²£à²ªà²¤à³à²°à²µà²¨à³à²¨à³ à²¨à³€à²¡à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      whyItMatters: {
+        en: 'Completes the constitutional transfer of sovereign power from the people to their democratically elected representatives.',
+        kn: 'à²ªà³à²°à²œà²¾à²ªà³à²°à²­à³à²¤à³à²µà²¦à²²à³à²²à²¿ à²…à²§à²¿à²•à²¾à²°à²µà²¨à³à²¨à³ à²¸à²‚à²µà²¿à²§à²¾à²¨à²¾à²¤à³à²®à²•à²µà²¾à²—à²¿ à²œà²¨à²°à²¿à²‚à²¦ à²šà³à²¨à²¾à²¯à²¿à²¤ à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³à²¿à²—à³† à²¹à²¸à³à²¤à²¾à²‚à²¤à²°à²¿à²¸à³à²µ à²…à²‚à²¤à²¿à²® à²˜à²Ÿà³à²Ÿ.'
+      },
+      whoIsInvolved: {
+        en: 'Returning Officer, Observer, Winning Candidate, General Public.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿, à²µà²¿à²œà³‡à²¤ à²…à²­à³à²¯à²°à³à²¥à²¿ à²®à²¤à³à²¤à³ à²¸à²¾à²°à³à²µà²œà²¨à²¿à²•à²°à³.'
+      },
+      rules: [
+        {
+          en: 'Results can only be challenged post-declaration through a formal Election Petition in the High Court.',
+          kn: 'à²«à²²à²¿à²¤à²¾à²‚à²¶à²µà²¨à³à²¨à³ à²¹à³ˆà²•à³‹à²°à³à²Ÿà³â€Œà²¨à²²à³à²²à²¿ à²šà³à²¨à²¾à²µà²£à²¾ à²…à²°à³à²œà²¿à²¯ à²®à³‚à²²à²• à²®à²¾à²¤à³à²° à²ªà³à²°à²¶à³à²¨à²¿à²¸à²¬à²¹à³à²¦à³.'
+        }
+      ],
+      terms: ['Certificate of Election', 'Election Petition'],
+      sources: [{ title: 'Conduct of Elections Rules, Rule 64 & 66' }]
+    }
+  ];
+
+  const glossaryTerms = [
+    {
+      id: 'election',
+      term: { en: 'Election', kn: 'à²šà³à²¨à²¾à²µà²£à³† (Election)' },
+      category: 'basics',
+      definition: {
+        en: 'A formal decision-making process by which a population chooses individuals to hold public office.',
+        kn: 'à²ªà³à²°à²œà³†à²—à²³à³ à²¤à²®à³à²® à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³à²¨à³à²¨à³ à²…à²§à²¿à²•à²¾à²°à²•à³à²•à³† à²†à²°à²¿à²¸à³à²µ à²¸à²¾à²‚à²µà²¿à²§à²¾à²¨à²¿à²• à²¨à²¿à²°à³à²§à²¾à²° à²ªà³à²°à²•à³à²°à²¿à²¯à³†.'
+      },
+      whyItMatters: {
+        en: 'It is the bedrock of democracy, allowing citizens to hold leaders accountable peacefully.',
+        kn: 'à²¨à²¾à²¯à²•à²°à²¿à²—à³† à²œà²µà²¾à²¬à³à²¦à²¾à²°à²¿ à²¤à²°à²²à³ à²®à²¤à³à²¤à³ à²¨à³€à²¤à²¿à²—à²³à²¨à³à²¨à³ à²¨à²¿à²°à³à²§à²°à²¿à²¸à²²à³ à²¨à²¾à²—à²°à²¿à²•à²°à²¿à²—à³† à²‡à²°à³à²µ à²®à³‚à²²à²­à³‚à²¤ à²ªà³à²°à²œà²¾à²¸à²¤à³à²¤à²¾à²¤à³à²®à²• à²…à²¸à³à²¤à³à²°.'
+      },
+      relatedTerms: ['Voter', 'Ballot', 'Electoral Roll']
+    },
+    {
+      id: 'voter',
+      term: { en: 'Voter / Elector', kn: 'à²®à²¤à²¦à²¾à²° (Voter)' },
+      category: 'basics',
+      definition: {
+        en: 'A citizen who meets statutory age and residency criteria and is enrolled on the official electoral roll.',
+        kn: 'à²•à²¾à²¨à³‚à²¨à³à²¬à²¦à³à²§ à²µà²¯à²¸à³à²¸à³ à²¤à²²à³à²ªà²¿ à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²¹à³†à²¸à²°à²¿à²°à³à²µ à²¯à²¾à²µà³à²¦à³‡ à²ªà³à²°à²œà³†.'
+      },
+      whyItMatters: {
+        en: 'Every voter possesses an equal constitutional voice regardless of wealth or social background.',
+        kn: 'à²¶à³à²°à³€à²®à²‚à²¤-à²¬à²¡à²µ à²­à³‡à²¦à²µà²¿à²²à³à²²à²¦à³† à²ªà³à²°à²¤à²¿à²¯à³Šà²¬à³à²¬à²°à²¿à²—à³‚ à²¸à²®à²¾à²¨à²µà²¾à²¦ à²’à²‚à²¦à³ à²®à²¤à²¦ à²¹à²•à³à²•à²¿à²¦à³†.'
+      },
+      relatedTerms: ['Electoral Roll', 'EPIC Card', 'Polling Station']
+    },
+    {
+      id: 'electoral-roll',
+      term: { en: 'Electoral Roll', kn: 'à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿ (Electoral Roll)' },
+      category: 'basics',
+      definition: {
+        en: 'The official list of all citizens registered and eligible to vote in a specific constituency.',
+        kn: 'à²’à²‚à²¦à³ à²¨à²¿à²°à³à²¦à²¿à²·à³à²Ÿ à²•à³à²·à³‡à²¤à³à²°à²¦à²²à³à²²à²¿ à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à²²à³ à²…à²°à³à²¹à²¤à³† à²¹à³Šà²‚à²¦à²¿à²°à³à²µ à²¨à²¾à²—à²°à²¿à²•à²° à²…à²§à²¿à²•à³ƒà²¤ à²ªà²Ÿà³à²Ÿà²¿.'
+      },
+      whyItMatters: {
+        en: 'Having a voter ID card alone is not enough; your name must be present in the electoral roll to vote.',
+        kn: 'à²•à³‡à²µà²² à²—à³à²°à³à²¤à²¿à²¨ à²šà³€à²Ÿà²¿ à²‡à²¦à³à²¦à²°à³† à²¸à²¾à²²à²¦à³; à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²¨à²¿à²®à³à²® à²¹à³†à²¸à²°à³ à²ˆ à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²‡à²°à³à²µà³à²¦à³ à²•à²¡à³à²¡à²¾à²¯.'
+      },
+      relatedTerms: ['Voter', 'Form 6']
+    },
+    {
+      id: 'evm',
+      term: { en: 'Electronic Voting Machine (EVM)', kn: 'à²‡à²µà²¿à²Žà²‚ (EVM)' },
+      category: 'voting',
+      definition: {
+        en: 'A standalone electronic device consisting of a Ballot Unit and a Control Unit used to record votes without internet or network connections.',
+        kn: 'à²¯à²¾à²µà³à²¦à³‡ à²‡à²‚à²Ÿà²°à³à²¨à³†à²Ÿà³ à²¸à²‚à²ªà²°à³à²•à²µà²¿à²²à³à²²à²¦à³† à²•à²¾à²°à³à²¯à²¨à²¿à²°à³à²µà²¹à²¿à²¸à³à²µ à²¸à³à²µà²¤à²‚à²¤à³à²° à²µà²¿à²¦à³à²¯à³à²¨à³à²®à²¾à²¨ à²®à²¤à²¯à²‚à²¤à³à²°.'
+      },
+      whyItMatters: {
+        en: 'Eliminates invalid paper ballots, prevents booth capturing, and accelerates tamper-evident counting.',
+        kn: 'à²¤à²¿à²°à²¸à³à²•à³ƒà²¤ à²®à²¤à²—à²³à²¨à³à²¨à³ à²¤à²¡à³†à²¯à³à²¤à³à²¤à²¦à³† à²®à²¤à³à²¤à³ à²¤à³à²µà²°à²¿à²¤, à²¨à²¿à²–à²° à²Žà²£à²¿à²•à³†à²—à³† à²¨à³†à²°à²µà²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['VVPAT', 'Control Unit']
+    },
+    {
+      id: 'vvpat',
+      term: { en: 'VVPAT (Voter Verifiable Paper Audit Trail)', kn: 'à²µà²¿à²µà²¿à²ªà³à²¯à²¾à²Ÿà³ (VVPAT)' },
+      category: 'voting',
+      definition: {
+        en: 'An independent verification printer attached to the EVM that generates a paper slip visible for 7 seconds before dropping into a sealed box.',
+        kn: 'à²‡à²µà²¿à²Žà²‚à²—à³† à²œà³‹à²¡à²¿à²¸à²²à²¾à²¦ à²®à³à²¦à³à²°à²•à²µà²¾à²—à²¿à²¦à³à²¦à³, à²¨à³€à²µà³ à²®à²¤ à²¹à²¾à²•à²¿à²¦ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯ à²šà²¿à²¹à³à²¨à³† 7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²•à²¾à²£à²¿à²¸à²¿ à²¸à³à²°à²•à³à²·à²¿à²¤ à²ªà³†à²Ÿà³à²Ÿà²¿à²—à³†à²—à³† à²¬à³€à²³à³à²¤à³à²¤à²¦à³†.'
+      },
+      whyItMatters: {
+        en: 'Enables physical paper audits to independently confirm that the electronic vote was stored exactly as cast.',
+        kn: 'à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾à²¨à²¿à²•à³ à²®à²¤à²µà³ à²¸à²°à²¿à²¯à²¾à²—à²¿ à²¦à²¾à²–à²²à²¾à²—à²¿à²¦à³†à²¯à³‡ à²Žà²‚à²¬à³à²¦à²¨à³à²¨à³ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à²¿à²•à³Šà²³à³à²³à²²à³ à²•à²¾à²—à²¦à²¦ à²ªà³à²°à²¾à²µà³†à²¯à²¨à³à²¨à³ à²’à²¦à²—à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['EVM', 'Control Unit']
+    },
+    {
+      id: 'nota',
+      term: { en: 'NOTA (None of the Above)', kn: 'à²¨à³‹à²Ÿà²¾ (NOTA)' },
+      category: 'voting',
+      definition: {
+        en: 'A ballot option allowing a voter to exercise their franchise while rejecting all contesting candidates.',
+        kn: 'à²¸à³à²ªà²°à³à²§à²¿à²¸à³à²¤à³à²¤à²¿à²°à³à²µ à²Žà²²à³à²²à²¾ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²¨à³à²¨à³ à²¤à²¿à²°à²¸à³à²•à²°à²¿à²¸à²²à³ à²®à²¤à²¦à²¾à²°à²°à²¿à²—à³† à²¨à³€à²¡à²²à²¾à²¦ à²’à²‚à²¦à³ à²ªà³à²°à²®à³à²– à²†à²¯à³à²•à³†.'
+      },
+      whyItMatters: {
+        en: 'Protects the right to express dissatisfaction with candidate choices without forfeiting ballot secrecy.',
+        kn: 'à²¯à²¾à²µ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³‚ à²¸à²°à²¿ à²‡à²²à³à²² à²Žà²‚à²¦à²¾à²— à²®à²¤à²¦à²¾à²¨à²¦à²¿à²‚à²¦ à²¹à²¿à²‚à²¦à³† à²¸à²°à²¿à²¯à²¦à³† à²¨à²¿à²®à³à²® à²…à²¸à²®à²¾à²§à²¾à²¨à²µà²¨à³à²¨à³ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²¦à²¾à²–à²²à²¿à²¸à²¬à²¹à³à²¦à³.'
+      },
+      relatedTerms: ['Ballot', 'Secrecy of Vote']
+    },
+    {
+      id: 'polling-station',
+      term: { en: 'Polling Station / Booth', kn: 'à²®à²¤à²—à²Ÿà³à²Ÿà³† (Polling Station)' },
+      category: 'voting',
+      definition: {
+        en: 'The designated physical building where registered electors cast their confidential votes.',
+        kn: 'à²¨à³‹à²‚à²¦à²¾à²¯à²¿à²¤ à²®à²¤à²¦à²¾à²°à²°à³ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²¨à²¿à²—à²¦à²¿à²ªà²¡à²¿à²¸à²¿à²¦ à²…à²§à²¿à²•à³ƒà²¤ à²•à³Šà² à²¡à²¿ à²…à²¥à²µà²¾ à²•à²Ÿà³à²Ÿà²¡.'
+      },
+      whyItMatters: {
+        en: 'Rules mandate that polling stations should ideally be within 2 km walking distance for every voter.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²°à²¿à²—à³† à²…à²¨à³à²•à³‚à²²à²µà²¾à²—à³à²µà²‚à²¤à³† à²¸à²¾à²®à²¾à²¨à³à²¯à²µà²¾à²—à²¿ 2 à²•à²¿.à²®à³€ à²µà³à²¯à²¾à²ªà³à²¤à²¿à²¯à²²à³à²²à²¿ à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²¨à³à²¨à³ à²¸à³à²¥à²¾à²ªà²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Presiding Officer', 'Queue']
+    },
+    {
+      id: 'nomination',
+      term: { en: 'Nomination', kn: 'à²¨à²¾à²®à²ªà²¤à³à²° (Nomination)' },
+      category: 'process',
+      definition: {
+        en: 'The formal submission of papers by a citizen seeking to contest an election for a public office.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à³†à²¯à²²à³à²²à²¿ à²¸à³à²ªà²°à³à²§à²¿à²¸à²²à³ à²‡à²šà³à²›à²¿à²¸à³à²µ à²µà³à²¯à²•à³à²¤à²¿à²¯à³ à²¸à²²à³à²²à²¿à²¸à³à²µ à²…à²§à²¿à²•à³ƒà²¤ à²…à²°à³à²œà²¿ à²®à²¤à³à²¤à³ à²¦à²¾à²–à²²à³†à²—à²³à³.'
+      },
+      whyItMatters: {
+        en: 'Ensures that candidates meet all constitutional criteria such as age and solvency before entering the ballot.',
+        kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³ à²µà²¯à²¸à³à²¸à³ à²®à³à²‚à²¤à²¾à²¦ à²¸à²¾à²‚à²µà²¿à²§à²¾à²¨à²¿à²• à²…à²°à³à²¹à²¤à³†à²—à²³à²¨à³à²¨à³ à²¹à³Šà²‚à²¦à²¿à²¦à³à²¦à²¾à²°à³†à²¯à³‡ à²Žà²‚à²¦à³ à²–à²šà²¿à²¤à²ªà²¡à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Affidavit', 'Scrutiny']
+    },
+    {
+      id: 'scrutiny',
+      term: { en: 'Scrutiny', kn: 'à²ªà²°à²¿à²¶à³€à²²à²¨à³† (Scrutiny)' },
+      category: 'process',
+      definition: {
+        en: 'The legal examination of all nomination papers by the Returning Officer to decide validity.',
+        kn: 'à²¸à²²à³à²²à²¿à²¸à²²à²¾à²¦ à²¨à²¾à²®à²ªà²¤à³à²°à²—à²³à³ à²¸à²°à²¿à²¯à²¾à²—à²¿à²µà³†à²¯à³‡ à²Žà²‚à²¦à³ à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²¨à²¡à³†à²¸à³à²µ à²•à²¾à²¨à³‚à²¨à³à²¬à²¦à³à²§ à²ªà²°à²¿à²¶à³€à²²à²¨à³†.'
+      },
+      whyItMatters: {
+        en: 'Filters out bogus or unqualified candidates transparently in front of opposing candidates.',
+        kn: 'à²…à²¨à²°à³à²¹ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²¨à³à²¨à³ à²¤à²¡à³†à²¦à³, à²¨à³ˆà²œ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²¿à²—à³† à²®à²¾à²¤à³à²° à²¸à³à²ªà²°à³à²§à²¿à²¸à²²à³ à²…à²µà²•à²¾à²¶ à²•à²²à³à²ªà²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Nomination', 'Returning Officer']
+    },
+    {
+      id: 'silence-period',
+      term: { en: 'Silence Period', kn: 'à²®à³Œà²¨ à²…à²µà²§à²¿ (Silence Period)' },
+      category: 'process',
+      definition: {
+        en: 'The 48-hour quiet window leading up to the conclusion of polling when all campaigning must halt.',
+        kn: 'à²®à²¤à²¦à²¾à²¨ à²®à³à²•à³à²¤à²¾à²¯à²•à³à²•à³† 48 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³ à²Žà²²à³à²²à²¾ à²°à³€à²¤à²¿à²¯ à²ªà³à²°à²šà²¾à²°à²µà²¨à³à²¨à³ à²¨à²¿à²²à³à²²à²¿à²¸à³à²µ à²…à²µà²§à²¿.'
+      },
+      whyItMatters: {
+        en: 'Protects voters from eleventh-hour pressure, allowing reasoned reflection before voting.',
+        kn: 'à²¯à²¾à²µà³à²¦à³‡ à²…à²‚à²¤à²¿à²® à²•à³à²·à²£à²¦ à²’à²¤à³à²¤à²¡à²µà²¿à²²à³à²²à²¦à³† à²®à²¤à²¦à²¾à²°à²°à³ à²ªà³à²°à²¶à²¾à²‚à²¤à²µà²¾à²—à²¿ à²¨à²¿à²°à³à²§à²°à²¿à²¸à²²à³ à²¨à³†à²°à²µà²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Campaign', 'Polling']
+    },
+    {
+      id: 'counting',
+      term: { en: 'Vote Counting', kn: 'à²®à²¤ à²Žà²£à²¿à²•à³† (Vote Counting)' },
+      category: 'counting',
+      definition: {
+        en: 'The systematic tallying of all cast votes from EVM control units and postal ballots under supervision.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾ à²µà³€à²•à³à²·à²•à²°à³ à²®à²¤à³à²¤à³ à²à²œà³†à²‚à²Ÿà²° à²¸à²®à³à²®à³à²–à²¦à²²à³à²²à²¿ à²¯à²‚à²¤à³à²°à²—à²³à³ à²®à²¤à³à²¤à³ à²…à²‚à²šà³† à²®à²¤à²—à²³ à²…à²§à²¿à²•à³ƒà²¤ à²²à³†à²•à³à²•à²¾à²šà²¾à²°.'
+      },
+      whyItMatters: {
+        en: 'Translates individual ballots into final parliamentary or council representation.',
+        kn: 'à²ªà³à²°à²¤à²¿à²¯à³Šà²‚à²¦à³ à²®à²¤à²µà²¨à³à²¨à³‚ à²ªà²¾à²°à²¦à²°à³à²¶à²•à²µà²¾à²—à²¿ à²²à³†à²•à³à²•à²¹à²¾à²•à²¿ à²…à²‚à²¤à²¿à²® à²œà²¨à²¾à²¦à³‡à²¶à²µà²¨à³à²¨à³ à²°à³‚à²ªà²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Strongroom', 'Control Unit']
+    },
+    {
+      id: 'result',
+      term: { en: 'Declaration of Result', kn: 'à²«à²²à²¿à²¤à²¾à²‚à²¶ à²˜à³‹à²·à²£à³† (Result)' },
+      category: 'counting',
+      definition: {
+        en: 'The formal announcement by the Returning Officer of the candidate who secured the highest number of valid votes.',
+        kn: 'à²…à²¤à²¿ à²¹à³†à²šà³à²šà³ à²®à²¾à²¨à³à²¯ à²®à²¤à²—à²³à²¨à³à²¨à³ à²ªà²¡à³†à²¦ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à²¨à³à²¨à³ à²µà²¿à²œà³‡à²¤à²°à³†à²‚à²¦à³ à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²¯à³ à²®à²¾à²¡à³à²µ à²…à²§à²¿à²•à³ƒà²¤ à²˜à³‹à²·à²£à³†.'
+      },
+      whyItMatters: {
+        en: 'Legally authorizes the winner to take their oath and assume legislative duties.',
+        kn: 'à²µà²¿à²œà³‡à²¤ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³ à²ªà³à²°à²®à²¾à²£à²µà²šà²¨ à²¸à³à²µà³€à²•à²°à²¿à²¸à²¿ à²•à²°à³à²¤à²µà³à²¯à²—à²³à²¨à³à²¨à³ à²¨à²¿à²°à³à²µà²¹à²¿à²¸à²²à³ à²•à²¾à²¨à³‚à²¨à³à²¬à²¦à³à²§ à²…à²§à²¿à²•à²¾à²° à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTerms: ['Certificate of Election']
+    }
+  ];
+
+  const quizQuestions = [
+    {
+      id: 'q1',
+      topicTag: 'Polling Rules',
+      question: {
+        en: 'If you are already standing in the queue when the official polling hours end (e.g. at 6:00 PM), are you still allowed to vote?',
+        kn: 'à²…à²§à²¿à²•à³ƒà²¤ à²®à²¤à²¦à²¾à²¨à²¦ à²¸à²®à²¯ à²®à³à²—à²¿à²¦à²¾à²— (à²‰à²¦à²¾: à²¸à²‚à²œà³† 6:00) à²¨à³€à²µà³ à²ˆà²—à²¾à²—à²²à³‡ à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²‚à²¤à²¿à²¦à³à²¦à²°à³†, à²¨à³€à²µà³ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²…à²¨à³à²®à²¤à²¿ à²‡à²¦à³†à²¯à³‡?'
+      },
+      options: {
+        en: [
+          'Yes, anyone inside the queue before the closing hour must be permitted to vote.',
+          'No, the polling booth closes strictly and machines shut off immediately.',
+          'Only senior citizens in the queue are allowed to vote.',
+          'It is left entirely to the discretion of the security personnel.'
+        ],
+        kn: [
+          'à²¹à³Œà²¦à³, à²®à³à²•à³à²¤à²¾à²¯à²¦ à²¸à²®à²¯à²•à³à²•à³† à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²‚à²¤à²¿à²°à³à²µ à²ªà³à²°à²¤à²¿à²¯à³Šà²¬à³à²¬à²°à²¿à²—à³‚ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à²²à³‡à²¬à³‡à²•à³.',
+          'à²‡à²²à³à²², à²¨à²¿à²—à²¦à²¿à²¤ à²¸à²®à²¯ à²®à³à²—à²¿à²¦ à²¤à²•à³à²·à²£ à²®à²¤à²¯à²‚à²¤à³à²°à²—à²³à²¨à³à²¨à³ à²¸à³à²¥à²—à²¿à²¤à²—à³Šà²³à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.',
+          'à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿à²°à³à²µ à²•à³‡à²µà²² à²¹à²¿à²°à²¿à²¯ à²¨à²¾à²—à²°à²¿à²•à²°à²¿à²—à³† à²®à²¾à²¤à³à²° à²…à²µà²•à²¾à²¶à²µà²¿à²°à³à²¤à³à²¤à²¦à³†.',
+          'à²‡à²¦à³ à²¸à²‚à²ªà³‚à²°à³à²£à²µà²¾à²—à²¿ à²­à²¦à³à²°à²¤à²¾ à²¸à²¿à²¬à³à²¬à²‚à²¦à²¿à²¯ à²¤à³€à²°à³à²®à²¾à²¨à²•à³à²•à³† à²¬à²¿à²Ÿà³à²Ÿà²¦à³à²¦à³.'
+        ]
+      },
+      correctIndex: 0,
+      explanation: {
+        en: 'Under election rules, the Presiding Officer distributes numbered slips from the back of the queue at closing time. Every voter who was in line before the deadline has a legal right to cast their vote.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾ à²¨à²¿à²¯à²®à²—à²³ à²ªà³à²°à²•à²¾à²°, à²¨à²¿à²—à²¦à²¿à²¤ à²¸à²®à²¯à²•à³à²•à³† à²¸à²°à²¦à²¿à²¯ à²•à³Šà²¨à³†à²¯à²¿à²‚à²¦ à²¸à²‚à²–à³à²¯à³†à²¯à³à²³à³à²³ à²šà³€à²Ÿà²¿à²—à²³à²¨à³à²¨à³ à²¨à³€à²¡à²²à²¾à²—à³à²¤à³à²¤à²¦à³†. à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²‚à²¤à²¿à²°à³à²µ à²Žà²²à³à²²à²°à²¿à²—à³‚ à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à²²à³ à²¹à²•à³à²•à²¿à²¦à³†.'
+      }
+    },
+    {
+      id: 'q2',
+      topicTag: 'EVM & VVPAT',
+      question: {
+        en: 'How long is the VVPAT paper audit slip visible through the transparent window after you press a button on the EVM?',
+        kn: 'à²‡à²µà²¿à²Žà²‚à²¨à²²à³à²²à²¿ à²—à³à²‚à²¡à²¿ à²’à²¤à³à²¤à²¿à²¦ à²¨à²‚à²¤à²° VVPAT à²¨ à²•à²¾à²—à²¦à²¦ à²¸à³à²²à²¿à²ªà³ à²Žà²·à³à²Ÿà³ à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²•à²¿à²Ÿà²•à²¿à²¯à²²à³à²²à²¿ à²—à³‹à²šà²°à²¿à²¸à³à²¤à³à²¤à²¦à³†?'
+      },
+      options: {
+        en: ['2 seconds', '7 seconds', '30 seconds', 'Until the next voter arrives'],
+        kn: ['2 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³à³', '7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³à³', '30 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³à³', 'à²®à³à²‚à²¦à²¿à²¨ à²®à²¤à²¦à²¾à²°à²°à³ à²¬à²°à³à²µà²µà²°à³†à²—à³†']
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'The VVPAT slip is illuminated and remains visible for exactly 7 seconds so the voter can verify that their vote was recorded for the chosen candidate and symbol before it drops into the sealed compartment.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²°à³ à²¤à²®à³à²® à²†à²¯à³à²•à³†à²¯ à²šà²¿à²¹à³à²¨à³† à²®à²¤à³à²¤à³ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à³† à²®à²¤ à²¦à²¾à²–à²²à²¾à²—à²¿à²¦à³†à²¯à³‡ à²Žà²‚à²¦à³ à²¦à³ƒà²¢à²ªà²¡à²¿à²¸à²¿à²•à³Šà²³à³à²³à²²à³ VVPAT à²¸à³à²²à²¿à²ªà³ à²¨à²¿à²–à²°à²µà²¾à²—à²¿ 7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²—à³‹à²šà²°à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      }
+    },
+    {
+      id: 'q3',
+      topicTag: 'Voter Registration',
+      question: {
+        en: 'What is the most critical requirement for being eligible to vote on election day?',
+        kn: 'à²®à²¤à²¦à²¾à²¨à²¦ à²¦à²¿à²¨ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²…à²¤à³à²¯à²‚à²¤ à²ªà³à²°à²®à³à²– à²®à²¤à³à²¤à³ à²•à²¡à³à²¡à²¾à²¯ à²…à²µà²¶à³à²¯à²•à²¤à³† à²à²¨à³?'
+      },
+      options: {
+        en: [
+          'Having a physical Voter ID (EPIC) card only.',
+          'Your name must be officially enrolled on the Electoral Roll of that polling station.',
+          'Having an income tax registration certificate.',
+          'A formal recommendation letter from local council representatives.'
+        ],
+        kn: [
+          'à²•à³‡à²µà²² à²®à²¤à²¦à²¾à²°à²° à²—à³à²°à³à²¤à²¿à²¨ à²šà³€à²Ÿà²¿ (EPIC) à²¹à³Šà²‚à²¦à²¿à²°à³à²µà³à²¦à³ à²®à²¾à²¤à³à²°.',
+          'à²† à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯ à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²®à³à²® à²¹à³†à²¸à²°à³ à²…à²§à²¿à²•à³ƒà²¤à²µà²¾à²—à²¿ à²¨à²®à³‚à²¦à²¾à²—à²¿à²°à²¬à³‡à²•à³.',
+          'à²†à²¦à²¾à²¯ à²¤à³†à²°à²¿à²—à³† à²ªà³à²°à²®à²¾à²£à²ªà²¤à³à²° à²¹à³Šà²‚à²¦à²¿à²°à³à²µà³à²¦à³.',
+          'à²¸à³à²¥à²³à³€à²¯ à²œà²¨à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³ à²¶à²¿à²«à²¾à²°à²¸à³ à²ªà²¤à³à²°à²µà²¿à²°à³à²µà³à²¦à³.'
+        ]
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'Presence of your name in the Electoral Roll is the supreme legal requirement. If your name is on the list, you can vote using alternate government photo IDs (Passport, Driving License, Aadhaar, PAN) even without the physical voter card.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²¹à³†à²¸à²°à³ à²‡à²°à³à²µà³à²¦à³ à²…à²¤à³à²¯à²‚à²¤ à²®à³à²–à³à²¯. à²¹à³†à²¸à²°à³ à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿à²¦à³à²¦à²°à³†, à²µà³‹à²Ÿà²°à³ à²à²¡à²¿ à²‡à²²à³à²²à²¦à²¿à²¦à³à²¦à²°à³‚ à²†à²§à²¾à²°à³, à²ªà²¾à²¸à³â€Œà²ªà³‹à²°à³à²Ÿà³ à²…à²¥à²µà²¾ à²¡à³à²°à³ˆà²µà²¿à²‚à²—à³ à²²à³ˆà²¸à³†à²¨à³à²¸à³ à²¤à³‹à²°à²¿à²¸à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²¬à²¹à³à²¦à³.'
+      }
+    },
+    {
+      id: 'q4',
+      topicTag: 'Campaign Rules',
+      question: {
+        en: 'When does the mandatory "Silence Period" (stopping of all election campaign rallies and loudspeakers) begin?',
+        kn: 'à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²šà²¾à²°, à²¸à²­à³†à²—à²³à³ à²®à²¤à³à²¤à³ à²§à³à²µà²¨à²¿à²µà²°à³à²§à²•à²—à²³à²¨à³à²¨à³ à²¨à²¿à²²à³à²²à²¿à²¸à³à²µ "à²®à³Œà²¨ à²…à²µà²§à²¿" à²¯à²¾à²µà²¾à²— à²ªà³à²°à²¾à²°à²‚à²­à²µà²¾à²—à³à²¤à³à²¤à²¦à³†?'
+      },
+      options: {
+        en: [
+          '12 hours before voting starts.',
+          '24 hours before voting starts.',
+          '48 hours before the conclusion of the polling hour.',
+          'Only on the midnight preceding counting day.'
+        ],
+        kn: [
+          'à²®à²¤à²¦à²¾à²¨ à²†à²°à²‚à²­à²µà²¾à²—à³à²µ 12 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³.',
+          'à²®à²¤à²¦à²¾à²¨ à²†à²°à²‚à²­à²µà²¾à²—à³à²µ 24 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³.',
+          'à²®à²¤à²¦à²¾à²¨ à²®à³à²•à³à²¤à²¾à²¯à²¦ à²¸à²®à²¯à²•à³à²•à³† 48 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³.',
+          'à²Žà²£à²¿à²•à³†à²¯ à²¦à²¿à²¨à²¦ à²¹à²¿à²‚à²¦à²¿à²¨ à²®à²§à³à²¯à²°à²¾à²¤à³à²°à²¿ à²®à²¾à²¤à³à²°.'
+        ]
+      },
+      correctIndex: 2,
+      explanation: {
+        en: 'Section 126 of the Representation of the People Act mandates that all public campaigning must conclude 48 hours prior to the close of polling.',
+        kn: 'à²•à²¾à²¨à³‚à²¨à²¿à²¨ à²ªà³à²°à²•à²¾à²°, à²®à²¤à²¦à²¾à²¨ à²®à³à²•à³à²¤à²¾à²¯à²—à³Šà²³à³à²³à³à²µ à²¸à²®à²¯à²•à³à²•à³† à²¸à²°à²¿à²¯à²¾à²—à²¿ 48 à²—à²‚à²Ÿà³†à²—à²³ à²®à³Šà²¦à²²à³ à²Žà²²à³à²²à²¾ à²¬à²¹à²¿à²°à²‚à²— à²ªà³à²°à²šà²¾à²°à²µà²¨à³à²¨à³ à²•à²¡à³à²¡à²¾à²¯à²µà²¾à²—à²¿ à²¨à²¿à²²à³à²²à²¿à²¸à²¬à³‡à²•à³.'
+      }
+    },
+    {
+      id: 'q5',
+      topicTag: 'NOTA Rights',
+      question: {
+        en: 'What is the primary civic purpose of the NOTA (None of the Above) option?',
+        kn: 'à²¨à³‹à²Ÿà²¾ (NOTA) à²†à²¯à³à²•à³†à²¯ à²ªà³à²°à²®à³à²– à²¨à²¾à²—à²°à²¿à²• à²‰à²¦à³à²¦à³‡à²¶à²µà³‡à²¨à³?'
+      },
+      options: {
+        en: [
+          'It automatically cancels the election if chosen by more than 10 people.',
+          'It allows voters to participate and reject all candidates while preserving secrecy of the ballot.',
+          'It gives the voter a cash refund on municipal taxes.',
+          'It transfers the vote to the independent candidate with the least votes.'
+        ],
+        kn: [
+          '10 à²•à³à²•à²¿à²‚à²¤ à²¹à³†à²šà³à²šà³ à²œà²¨à²°à³ à²‡à²¦à²¨à³à²¨à³ à²†à²°à²¿à²¸à²¿à²¦à²°à³† à²šà³à²¨à²¾à²µà²£à³†à²¯à²¨à³à²¨à³ à²°à²¦à³à²¦à³à²—à³Šà²³à²¿à²¸à³à²¤à³à²¤à²¦à³†.',
+          'à²—à³Œà²ªà³à²¯à²¤à³†à²¯à²¨à³à²¨à³ à²•à²¾à²ªà²¾à²¡à²¿à²•à³Šà²‚à²¡à³ à²Žà²²à³à²²à²¾ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²¨à³à²¨à³ à²¤à²¿à²°à²¸à³à²•à²°à²¿à²¸à²²à³ à²®à²¤à²¦à²¾à²°à²°à²¿à²—à³† à²¸à²¾à²‚à²µà²¿à²§à²¾à²¨à²¿à²• à²¹à²•à³à²•à³ à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†.',
+          'à²¤à³†à²°à²¿à²—à³†à²¯à²²à³à²²à²¿ à²°à²¿à²¯à²¾à²¯à²¿à²¤à²¿ à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†.',
+          'à²•à²¡à²¿à²®à³† à²®à²¤ à²ªà²¡à³†à²¦ à²¸à³à²µà²¤à²‚à²¤à³à²° à²…à²­à³à²¯à²°à³à²¥à²¿à²—à³† à²®à²¤à²µà²¨à³à²¨à³ à²µà²°à³à²—à²¾à²¯à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+        ]
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'NOTA empowers citizens to exercise their democratic franchise to express dissatisfaction with all contesting candidates without giving up secrecy or abstaining.',
+        kn: 'à²¯à²¾à²µ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³‚ à²¸à²°à²¿ à²‡à²²à³à²² à²Žà²‚à²¦à²¾à²— à²®à²¤à²¦à²¾à²¨à²¦à²¿à²‚à²¦ à²¦à³‚à²° à²‰à²³à²¿à²¯à²¦à³†, à²¤à²¨à³à²¨ à²…à²¸à²®à³à²®à²¤à²¿à²¯à²¨à³à²¨à³ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²¦à²¾à²–à²²à²¿à²¸à²²à³ à²¨à³‹à²Ÿà²¾ à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à³à²¤à³à²¤à²¦à³†.'
+      }
+    },
+    {
+      id: 'q6',
+      topicTag: 'Ballot Secrecy',
+      question: {
+        en: 'Why is taking a photo or selfie of your marked ballot or EVM strictly illegal?',
+        kn: 'à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à³à²µà²¾à²— à²‡à²µà²¿à²Žà²‚ à²…à²¥à²µà²¾ à²®à²¤à²ªà²¤à³à²°à²¦ à²«à³‹à²Ÿà³‹ à²…à²¥à²µà²¾ à²¸à³†à²²à³à²«à²¿ à²¤à³†à²—à³†à²¯à³à²µà³à²¦à³ à²à²•à³† à²•à²¾à²¨à³‚à²¨à³à²¬à²¾à²¹à²¿à²°?'
+      },
+      options: {
+        en: [
+          'Because cameras damage the electronic screen.',
+          'To prevent vote buying, intimidation, and protect the inviolable constitutional secrecy of the vote.',
+          'Because voting booths have copyright restrictions.',
+          'To save smartphone battery for emergency calls.'
+        ],
+        kn: [
+          'à²•à³à²¯à²¾à²®à³†à²°à²¾ à²¬à³†à²³à²•à³ à²¯à²‚à²¤à³à²°à²¦ à²ªà²°à²¦à³†à²¯à²¨à³à²¨à³ à²¹à²¾à²³à³à²®à²¾à²¡à³à²¤à³à²¤à²¦à³†.',
+          'à²®à²¤ à²–à²°à³€à²¦à²¿, à²¬à³†à²¦à²°à²¿à²•à³†à²—à²³à²¨à³à²¨à³ à²¤à²¡à³†à²¯à²²à³ à²®à²¤à³à²¤à³ à²®à²¤à²¦à²¾à²¨à²¦ à²¸à²¾à²‚à²µà²¿à²§à²¾à²¨à²¿à²• à²—à³Œà²ªà³à²¯à²¤à³†à²¯à²¨à³à²¨à³ à²°à²•à³à²·à²¿à²¸à²²à³.',
+          'à²®à²¤à²—à²Ÿà³à²Ÿà³†à²—à²³à²¿à²—à³† à²¹à²•à³à²•à³à²¸à³à²µà²¾à²®à³à²¯ à²¨à²¿à²°à³à²¬à²‚à²§à²—à²³à²¿à²µà³†.',
+          'à²®à³Šà²¬à³ˆà²²à³ à²¬à³à²¯à²¾à²Ÿà²°à²¿ à²‰à²³à²¿à²¸à²²à³.'
+        ]
+      },
+      correctIndex: 1,
+      explanation: {
+        en: 'If voters could show proof of how they voted, criminal entities could coerce or buy votes. Secrecy protects you because nobody can ever prove who you voted for.',
+        kn: 'à²®à²¤ à²¹à²¾à²•à²¿à²¦ à²ªà³à²°à²¾à²µà³†à²¯à²¨à³à²¨à³ à²¤à³‹à²°à²¿à²¸à²²à³ à²¸à²¾à²§à³à²¯à²µà²¾à²¦à²°à³†, à²†à²®à²¿à²· à²…à²¥à²µà²¾ à²¬à³†à²¦à²°à²¿à²•à³†à²¯ à²®à³‚à²²à²• à²®à²¤ à²•à²¦à²¿à²¯à³à²µ à²…à²ªà²¾à²¯à²µà²¿à²°à³à²¤à³à²¤à²¦à³†. à²—à³Œà²ªà³à²¯à²¤à³†à²¯à³ à²®à²¤à²¦à²¾à²°à²°à²¨à³à²¨à³ à²¸à²‚à²ªà³‚à²°à³à²£à²µà²¾à²—à²¿ à²°à²•à³à²·à²¿à²¸à³à²¤à³à²¤à²¦à³†.'
+      }
+    }
+  ];
+
+  const mythFactData = [
+    {
+      id: 'mf1',
+      category: 'Voter ID',
+      statement: {
+        en: 'If I lost or forgot my physical Voter ID (EPIC) card, I cannot vote on election day.',
+        kn: 'à²¨à²¨à³à²¨ à²µà³‹à²Ÿà²°à³ à²à²¡à²¿ (EPIC) à²•à²¾à²°à³à²¡à³ à²•à²³à³†à²¦à³à²¹à³‹à²—à²¿à²¦à³à²¦à²°à³† à²¨à²¾à²¨à³ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²¸à²¾à²§à³à²¯à²µà²¿à²²à³à²².'
+      },
+      isFact: false,
+      verdict: { en: 'DEBUNKED MYTH', kn: 'à²¸à³à²³à³à²³à³ à²•à²²à³à²ªà²¨à³† (à²®à²¿à²¥à³à²¯)' },
+      explanation: {
+        en: 'If your name is registered on the official Electoral Roll of your polling station, you can vote using any approved government identity proof such as Aadhaar Card, Passport, Driving License, or PAN Card.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²®à³à²® à²¹à³†à²¸à²°à³ à²‡à²¦à³à²¦à²°à³† à²¸à²¾à²•à³; à²µà³‹à²Ÿà²°à³ à²à²¡à²¿ à²‡à²²à³à²²à²¦à²¿à²¦à³à²¦à²°à³‚ à²†à²§à²¾à²°à³ à²•à²¾à²°à³à²¡à³, à²ªà²¾à²¸à³â€Œà²ªà³‹à²°à³à²Ÿà³ à²…à²¥à²µà²¾ à²¡à³à²°à³ˆà²µà²¿à²‚à²—à³ à²²à³ˆà²¸à³†à²¨à³à²¸à³ à²¤à³‹à²°à²¿à²¸à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²¬à²¹à³à²¦à³.'
+      },
+      source: 'Election Commission of India Order on Alternative Identity Documents'
+    },
+    {
+      id: 'mf2',
+      category: 'Voting Machines',
+      statement: {
+        en: 'EVMs can be hacked wirelessly via Bluetooth, Wi-Fi, or cellular networks.',
+        kn: 'à²‡à²µà²¿à²Žà²‚à²—à²³à²¨à³à²¨à³ à²¬à³à²²à³‚à²Ÿà³‚à²¤à³, à²µà³ˆ-à²«à³ˆ à²…à²¥à²µà²¾ à²®à³Šà²¬à³ˆà²²à³ à²¨à³†à²Ÿà³â€Œà²µà²°à³à²•à³ à²®à³‚à²²à²• à²¹à³à²¯à²¾à²•à³ à²®à²¾à²¡à²¬à²¹à³à²¦à³.'
+      },
+      isFact: false,
+      verdict: { en: 'DEBUNKED MYTH', kn: 'à²¸à³à²³à³à²³à³ à²•à²²à³à²ªà²¨à³† (à²®à²¿à²¥à³à²¯)' },
+      explanation: {
+        en: 'EVMs are completely standalone computing devices. They contain no internet chips, no radio frequency modules, no Bluetooth, and no wireless receivers. Code is permanently burnt onto One-Time Programmable microcontrollers at the foundry.',
+        kn: 'à²‡à²µà²¿à²Žà²‚à²—à²³à³ à²¸à²‚à²ªà³‚à²°à³à²£à²µà²¾à²—à²¿ à²¨à³†à²Ÿà³â€Œà²µà²°à³à²•à³ à²°à²¹à²¿à²¤ à²¸à³à²µà²¤à²‚à²¤à³à²° à²¯à²‚à²¤à³à²°à²—à²³à²¾à²—à²¿à²µà³†. à²…à²µà³à²—à²³à²²à³à²²à²¿ à²¯à²¾à²µà³à²¦à³‡ à²‡à²‚à²Ÿà²°à³à²¨à³†à²Ÿà³, à²¬à³à²²à³‚à²Ÿà³‚à²¤à³ à²…à²¥à²µà²¾ à²°à²¿à²¸à³€à²µà²°à³ à²‡à²°à³à²µà³à²¦à²¿à²²à³à²².'
+      },
+      source: 'Technical Expert Committee (TEC) on Electronic Voting Machines'
+    },
+    {
+      id: 'mf3',
+      category: 'NOTA',
+      statement: {
+        en: 'In parliamentary elections, if NOTA receives more votes than any candidate, the election is automatically voided and re-conducted.',
+        kn: 'à²²à³‹à²•à²¸à²­à³† à²…à²¥à²µà²¾ à²µà²¿à²§à²¾à²¨ à²¸à²­à³† à²šà³à²¨à²¾à²µà²£à³†à²¯à²²à³à²²à²¿ à²¨à³‹à²Ÿà²¾à²—à³† à²…à²¤à²¿ à²¹à³†à²šà³à²šà³ à²®à²¤ à²¬à²‚à²¦à²°à³†, à²† à²šà³à²¨à²¾à²µà²£à³†à²¯à²¨à³à²¨à³ à²°à²¦à³à²¦à³à²—à³Šà²³à²¿à²¸à²¿ à²®à²°à³à²šà³à²¨à²¾à²µà²£à³† à²¨à²¡à³†à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      isFact: false,
+      verdict: { en: 'DEBUNKED MYTH', kn: 'à²¸à³à²³à³à²³à³ à²•à²²à³à²ªà²¨à³† (à²®à²¿à²¥à³à²¯)' },
+      explanation: {
+        en: 'Under the first-past-the-post system in general assembly/parliamentary elections, the candidate securing the highest number of valid candidate votes is declared winner, regardless of the NOTA total. However, NOTA serves as official public data on voter dissatisfaction.',
+        kn: 'à²¸à²¾à²®à²¾à²¨à³à²¯ à²šà³à²¨à²¾à²µà²£à³†à²—à²³à²²à³à²²à²¿ à²¨à³‹à²Ÿà²¾ à²…à²¤à²¿ à²¹à³†à²šà³à²šà³ à²®à²¤ à²ªà²¡à³†à²¦à²°à³‚, à²¸à³à²ªà²°à³à²§à²¿à²¸à²¿à²¦ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à²²à³à²²à²¿ à²¯à²¾à²°à³ à²¹à³†à²šà³à²šà³ à²®à²¤ à²ªà²¡à³†à²¦à²¿à²°à³à²¤à³à²¤à²¾à²°à³‹ à²…à²µà²°à³‡ à²µà²¿à²œà³‡à²¤à²°à²¾à²—à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      source: 'Supreme Court of India (PUCL vs. Union of India, 2013)'
+    },
+    {
+      id: 'mf4',
+      category: 'Polling Procedures',
+      statement: {
+        en: 'If you are already standing inside the queue when official voting hours close, you are legally entitled to vote.',
+        kn: 'à²®à²¤à²¦à²¾à²¨à²¦ à²®à³à²•à³à²¤à²¾à²¯à²¦ à²¸à²®à²¯à²•à³à²•à³† à²¨à³€à²µà³ à²ˆà²—à²¾à²—à²²à³‡ à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿ à²¨à²¿à²‚à²¤à²¿à²¦à³à²¦à²°à³†, à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²¨à²¿à²®à²—à³† à²•à²¾à²¨à³‚à²¨à³à²¬à²¦à³à²§ à²¹à²•à³à²•à²¿à²¦à³†.'
+      },
+      isFact: true,
+      verdict: { en: 'VERIFIED FACT', kn: 'à²¦à³ƒà²¢à³€à²•à³ƒà²¤ à²¸à²¤à³à²¯' },
+      explanation: {
+        en: 'At the exact closing time (e.g. 6:00 PM), the Presiding Officer signs slips and distributes them to every person in line starting from the last person forward. Polling continues until the last slip holder casts their vote.',
+        kn: 'à²®à³à²•à³à²¤à²¾à²¯à²¦ à²¸à²®à²¯à²•à³à²•à³† à²¸à²°à²¿à²¯à²¾à²—à²¿ à²¸à²°à²¦à²¿à²¯à²²à³à²²à²¿à²°à³à²µ à²•à³Šà²¨à³†à²¯ à²µà³à²¯à²•à³à²¤à²¿à²¯à²¿à²‚à²¦ à²ªà³à²°à²¾à²°à²‚à²­à²¿à²¸à²¿ à²…à²§à²¿à²•à²¾à²°à²¿à²—à²³à³ à²šà³€à²Ÿà²¿ à²¨à³€à²¡à³à²¤à³à²¤à²¾à²°à³† à²®à²¤à³à²¤à³ à²Žà²²à³à²²à²°à²¿à²—à³‚ à²®à²¤à²¦à²¾à²¨à²•à³à²•à³† à²…à²µà²•à²¾à²¶ à²¨à³€à²¡à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      source: 'Statutory Presiding Officer Handbook, Rule 43'
+    },
+    {
+      id: 'mf5',
+      category: 'Eligibility',
+      statement: {
+        en: 'Any citizen who turns 18 years old can walk directly into a polling booth on election day and register on the spot.',
+        kn: '18 à²µà²°à³à²· à²¤à³à²‚à²¬à²¿à²¦ à²¯à²¾à²µà³à²¦à³‡ à²¨à²¾à²—à²°à²¿à²•à²¨à³ à²®à²¤à²¦à²¾à²¨à²¦ à²¦à²¿à²¨ à²¨à³‡à²°à²µà²¾à²—à²¿ à²®à²¤à²—à²Ÿà³à²Ÿà³†à²—à³† à²¹à³‹à²—à²¿ à²¤à²•à³à²·à²£ à²¨à³‹à²‚à²¦à²¾à²¯à²¿à²¸à²¿à²•à³Šà²³à³à²³à²¬à²¹à³à²¦à³.'
+      },
+      isFact: false,
+      verdict: { en: 'DEBUNKED MYTH', kn: 'à²¸à³à²³à³à²³à³ à²•à²²à³à²ªà²¨à³† (à²®à²¿à²¥à³à²¯)' },
+      explanation: {
+        en: 'Electoral registration must be completed in advance (via Form 6 or online voter portals). The voter roll is finalized ahead of the nomination deadline. On-the-spot registration on polling day is not permitted.',
+        kn: 'à²®à²¤à²¦à²¾à²°à²° à²ªà²Ÿà³à²Ÿà²¿à²—à³† à²®à³à²‚à²šà²¿à²¤à²µà²¾à²—à²¿à²¯à³‡ (Form 6 à²®à³‚à²²à²•) à²…à²°à³à²œà²¿ à²¸à²²à³à²²à²¿à²¸à²¬à³‡à²•à³. à²®à²¤à²¦à²¾à²¨à²¦ à²¦à²¿à²¨ à²¸à³à²¥à²³à²¦à²²à³à²²à³‡ à²¨à³‹à²‚à²¦à²£à²¿ à²®à²¾à²¡à²²à³ à²…à²µà²•à²¾à²¶à²µà²¿à²²à³à²².'
+      },
+      source: 'Registration of Electors Rules, 1960'
+    }
+  ];
+
+  const aiKnowledgeBase = {
+    'who should i vote for': {
+      shortAnswer: {
+        en: 'ELECTRA is an independent, non-partisan educational platform and never recommends specific candidates or political parties.',
+        kn: 'à²Žà²²à³†à²•à³à²Ÿà³à²°à²¾ à²’à²‚à²¦à³ à²¸à³à²µà²¤à²‚à²¤à³à²°, à²¤à²Ÿà²¸à³à²¥ à²¶à³ˆà²•à³à²·à²£à²¿à²• à²µà³‡à²¦à²¿à²•à³†à²¯à²¾à²—à²¿à²¦à³à²¦à³ à²¯à²¾à²µà³à²¦à³‡ à²¨à²¿à²°à³à²¦à²¿à²·à³à²Ÿ à²…à²­à³à²¯à²°à³à²¥à²¿ à²…à²¥à²µà²¾ à²°à²¾à²œà²•à³€à²¯ à²ªà²•à³à²·à²µà²¨à³à²¨à³ à²¶à²¿à²«à²¾à²°à²¸à³ à²®à²¾à²¡à³à²µà³à²¦à²¿à²²à³à²².'
+      },
+      howItWorks: {
+        en: 'To make an informed decision: 1) Read each candidateâ€™s sworn affidavit for qualifications and assets, 2) Compare their public manifestos and past public integrity, and 3) Vote according to your conscience on polling day.',
+        kn: 'à²‰à²¤à³à²¤à²® à²¨à²¿à²°à³à²§à²¾à²° à²¤à³†à²—à³†à²¦à³à²•à³Šà²³à³à²³à²²à³: 1) à²…à²­à³à²¯à²°à³à²¥à²¿à²¯ à²…à²«à²¿à²¡à²µà²¿à²Ÿà³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿, 2) à²…à²µà²° à²ªà³à²°à²£à²¾à²³à²¿à²•à³†à²¯à²¨à³à²¨à³ à²—à²®à²¨à²¿à²¸à²¿, 3) à²¨à²¿à²®à³à²® à²¸à³à²µà²‚à²¤ à²µà²¿à²µà³‡à²šà²¨à³†à²¯à²¿à²‚à²¦ à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à²¿.'
+      },
+      relatedTopics: ['Affidavit', 'Nomination', 'Manifesto', 'Secrecy of Vote'],
+      sources: ['Constitution of India â€” Universal Adult Suffrage', 'Electoral Transparency Framework']
+    },
+    'what happens during polling': {
+      shortAnswer: {
+        en: 'Polling is the scheduled day when registered electors visit their assigned booth to cast their confidential ballot.',
+        kn: 'à²®à²¤à²¦à²¾à²¨à²¦ à²¦à²¿à²¨à²¦à²‚à²¦à³ à²¨à³‹à²‚à²¦à²¾à²¯à²¿à²¤ à²®à²¤à²¦à²¾à²°à²°à³ à²¤à²®à³à²® à²¨à²¿à²—à²¦à²¿à²¤ à²®à²¤à²—à²Ÿà³à²Ÿà³†à²—à³† à²­à³‡à²Ÿà²¿ à²¨à³€à²¡à²¿ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²®à²¤ à²šà²²à²¾à²¯à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      howItWorks: {
+        en: '1) The First Polling Officer checks your photo ID against the Electoral Roll. 2) The Second Polling Officer marks your left index finger with indelible ink. 3) The Third Polling Officer authorizes the EVM. 4) Inside the private compartment, you press your choice and the VVPAT slip confirms your vote for 7 seconds.',
+        kn: '1) à²®à²¤à²—à²Ÿà³à²Ÿà³†à²¯à²²à³à²²à²¿ à²—à³à²°à³à²¤à²¿à²¨ à²šà³€à²Ÿà²¿ à²ªà²°à²¿à²¶à³€à²²à²¨à³†. 2) à²Žà²¡à²¤à³‹à²°à³ à²¬à³†à²°à²³à²¿à²—à³† à²…à²³à²¿à²¸à²²à²¾à²—à²¦ à²¶à²¾à²¯à²¿ à²¹à²¾à²•à³à²µà³à²¦à³. 3) à²‡à²µà²¿à²Žà²‚ à²¸à²•à³à²°à²¿à²¯à²—à³Šà²³à²¿à²¸à³à²µà³à²¦à³. 4) à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²†à²¯à³à²•à³†à²¯ à²—à³à²‚à²¡à²¿ à²’à²¤à³à²¤à³à²µà³à²¦à³ à²®à²¤à³à²¤à³ VVPAT à²¸à³à²²à²¿à²ªà³ 7 à²¸à³†à²•à³†à²‚à²¡à³à²—à²³ à²•à²¾à²² à²—à³‹à²šà²°à²¿à²¸à³à²µà³à²¦à³.'
+      },
+      relatedTopics: ['EVM & VVPAT', 'Indelible Ink', 'Secrecy of Vote'],
+      sources: ['Handbook for Polling Officers, ECI']
+    },
+    'what is nomination': {
+      shortAnswer: {
+        en: 'Nomination is the formal legal procedure where a citizen submits official paperwork to contest an election for public office.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à³†à²¯à²²à³à²²à²¿ à²¸à³à²ªà²°à³à²§à²¿à²¸à²²à³ à²‡à²šà³à²›à²¿à²¸à³à²µ à²ªà³à²°à²œà³†à²¯à³ à²¸à²²à³à²²à²¿à²¸à³à²µ à²…à²§à²¿à²•à³ƒà²¤ à²•à²¾à²¨à³‚à²¨à³à²¬à²¦à³à²§ à²…à²°à³à²œà²¿ à²ªà³à²°à²•à³à²°à²¿à²¯à³†.'
+      },
+      howItWorks: {
+        en: 'Candidates file prescribed forms before the Returning Officer, accompanied by proposers from that constituency. They must pay a statutory security deposit and submit Form 26 sworn affidavits detailing criminal background, education, and financial assets.',
+        kn: 'à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³à³ à²† à²•à³à²·à³‡à²¤à³à²°à²¦ à²®à²¤à²¦à²¾à²°à²° à²¬à³†à²‚à²¬à²²à²¦à³Šà²‚à²¦à²¿à²—à³† à²šà³à²¨à²¾à²µà²£à²¾à²§à²¿à²•à²¾à²°à²¿à²—à³† à²…à²°à³à²œà²¿ à²¸à²²à³à²²à²¿à²¸à³à²¤à³à²¤à²¾à²°à³†. à²­à²¦à³à²°à²¤à²¾ à² à³‡à²µà²£à²¿ à²®à²¤à³à²¤à³ à²†à²¸à³à²¤à²¿, à²…à²ªà²°à²¾à²§ à²¹à²¿à²¨à³à²¨à³†à²²à³†à²¯ à²…à²«à²¿à²¡à²µà²¿à²Ÿà³ à²¸à²²à³à²²à²¿à²¸à³à²µà³à²¦à³ à²•à²¡à³à²¡à²¾à²¯.'
+      },
+      relatedTopics: ['Affidavit', 'Scrutiny', 'Security Deposit'],
+      sources: ['Representation of the People Act, 1951, Section 33']
+    },
+    'how does vote counting work': {
+      shortAnswer: {
+        en: 'Vote counting is the transparent, round-wise tallying of all polled electronic votes and postal ballots in the presence of candidate agents.',
+        kn: 'à²®à²¤ à²Žà²£à²¿à²•à³†à²¯à³ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³ à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³ à²¸à²®à³à²®à³à²–à²¦à²²à³à²²à²¿ à²¸à³à²¤à³à²¤à³à²—à²³ à²ªà³à²°à²•à²¾à²° à²¨à²¡à³†à²¯à³à²µ à²ªà²¾à²°à²¦à²°à³à²¶à²• à²²à³†à²•à³à²•à²¾à²šà²¾à²°à²µà²¾à²—à²¿à²¦à³†.'
+      },
+      howItWorks: {
+        en: 'The strongroom is opened under camera monitoring. Postal ballots are tallied first. EVM Control Units have their seals verified. Pressing the "RESULT" button on each machine displays votes per candidate, which are signed by candidate agents and verified with sample VVPAT paper audits.',
+        kn: 'à²­à²¦à³à²°à²¤à²¾ à²•à³Šà² à²¡à²¿ à²¤à³†à²°à³†à²¦à³ à²®à³Šà²¦à²²à³ à²…à²‚à²šà³† à²®à²¤à²—à²³à³, à²¨à²‚à²¤à²° à²‡à²µà²¿à²Žà²‚ à²¯à²‚à²¤à³à²°à²—à²³ à²¸à³€à²²à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¸à²¿ "RESULT" à²—à³à²‚à²¡à²¿ à²’à²¤à³à²¤à³à²µ à²®à³‚à²²à²• à²…à²­à³à²¯à²°à³à²¥à²¿à²—à²³ à²®à²¤à²—à²³à²¨à³à²¨à³ à²¸à³à²¤à³à²¤à³à²—à²³ à²ªà³à²°à²•à²¾à²° à²¦à²¾à²–à²²à²¿à²¸à²²à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTopics: ['Strongroom', 'Control Unit', 'VVPAT'],
+      sources: ['ECI Counting Guidelines & Audit Protocols']
+    },
+    'what does nota mean': {
+      shortAnswer: {
+        en: 'NOTA stands for "None of the Above". It allows you to participate in voting without choosing any candidate on the ballot.',
+        kn: 'à²¨à³‹à²Ÿà²¾ à²Žà²‚à²¦à²°à³† "None of the Above" (à²®à³‡à²²à²¿à²¨ à²¯à²¾à²°à³‚ à²…à²²à³à²²). à²¯à²¾à²µà³à²¦à³‡ à²…à²­à³à²¯à²°à³à²¥à²¿à²—à³‚ à²®à²¤ à²¹à²¾à²•à²²à³ à²‡à²·à³à²Ÿà²µà²¿à²²à³à²²à²¦à²¿à²¦à³à²¦à²¾à²— à²‡à²¦à²¨à³à²¨à³ à²†à²¯à³à²•à³† à²®à²¾à²¡à²¬à²¹à³à²¦à³.'
+      },
+      howItWorks: {
+        en: 'Introduced following a landmark 2013 Supreme Court ruling, NOTA appears as the final entry on the ballot unit. It guarantees that electors who reject all candidates can cast their ballot secretly without losing their franchise.',
+        kn: 'à²¯à²¾à²µ à²…à²­à³à²¯à²°à³à²¥à²¿à²¯à³‚ à²¸à²°à²¿ à²‡à²²à³à²² à²Žà²‚à²¦à²¾à²— à²®à²¤à²¦à²¾à²°à²°à³ à²°à²¹à²¸à³à²¯à²µà²¾à²—à²¿ à²¤à²®à³à²® à²…à²¸à²®à³à²®à²¤à²¿à²¯à²¨à³à²¨à³ à²šà²²à²¾à²¯à²¿à²¸à²²à³ à²‡à²¦à³ à²¨à³†à²°à²µà²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTopics: ['Ballot', 'Secrecy of Vote', 'EVM'],
+      sources: ['Supreme Court of India (Writ Petition 161 of 2004)']
+    },
+    'explain elections in simple language': {
+      shortAnswer: {
+        en: 'An election is how a community peacefully picks leaders to manage laws, taxes, roads, schools, and civic services.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à³† à²Žà²‚à²¦à²°à³† à²œà²¨à²°à³ à²’à²Ÿà³à²Ÿà²¾à²—à²¿ à²¤à²®à³à²® à²•à²¾à²¨à³‚à²¨à³, à²¶à²¾à²²à³†, à²°à²¸à³à²¤à³† à²®à²¤à³à²¤à³ à²¸à²¾à²°à³à²µà²œà²¨à²¿à²• à²¸à³‡à²µà³†à²—à²³à²¨à³à²¨à³ à²¨à²¿à²°à³à²µà²¹à²¿à²¸à²²à³ à²¨à²¾à²¯à²•à²°à²¨à³à²¨à³ à²¶à²¾à²‚à²¤à²¿à²¯à³à²¤à²µà²¾à²—à²¿ à²†à²¯à³à²•à³† à²®à²¾à²¡à³à²µ à²µà²¿à²§à²¾à²¨.'
+      },
+      howItWorks: {
+        en: 'Instead of one ruler making all decisions without asking, citizens over 18 vote for candidates who represent their ideas. Whoever receives the highest support represents that area in council or parliament.',
+        kn: '18 à²µà²°à³à²· à²®à³‡à²²à³à²ªà²Ÿà³à²Ÿ à²Žà²²à³à²²à²¾ à²ªà³à²°à²œà³†à²—à²³à³ à²¤à²®à²—à³† à²¸à²°à²¿ à²Žà²¨à²¿à²¸à³à²µ à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à³† à²®à²¤ à²¹à²¾à²•à³à²¤à³à²¤à²¾à²°à³†. à²¹à³†à²šà³à²šà³ à²¬à³†à²‚à²¬à²² à²ªà²¡à³†à²¦à²µà²°à³ à²œà²¨à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²¯à²¾à²—à³à²¤à³à²¤à²¾à²°à³†.'
+      },
+      relatedTopics: ['Voter', 'Election Journey', 'Ballot'],
+      sources: ['Civic Education Standards â€” Democratic Foundations']
+    }
+  };
+
+  function findAIAnswer(query, mode) {
+    const normalized = (query || '').toLowerCase().trim();
+    if (normalized.includes('who should i vote') || normalized.includes('which party') || normalized.includes('best party')) {
+      return aiKnowledgeBase['who should i vote for'];
+    }
+    for (const [key, response] of Object.entries(aiKnowledgeBase)) {
+      if (normalized.includes(key)) {
+        return response;
+      }
+    }
+    if (normalized.includes('poll') || normalized.includes('booth') || normalized.includes('voting day')) {
+      return aiKnowledgeBase['what happens during polling'];
+    }
+    if (normalized.includes('nominat') || normalized.includes('affidavit') || normalized.includes('form 26')) {
+      return aiKnowledgeBase['what is nomination'];
+    }
+    if (normalized.includes('count') || normalized.includes('tally') || normalized.includes('strongroom')) {
+      return aiKnowledgeBase['how does vote counting work'];
+    }
+    if (normalized.includes('nota') || normalized.includes('none of')) {
+      return aiKnowledgeBase['what does nota mean'];
+    }
+
+    return {
+      shortAnswer: {
+        en: 'Elections are the constitutional foundation of democracy, ensuring government by the consent of the governed.',
+        kn: 'à²šà³à²¨à²¾à²µà²£à³†à²—à²³à³ à²ªà³à²°à²œà²¾à²ªà³à²°à²­à³à²¤à³à²µà²¦ à²¸à²¾à²‚à²µà²¿à²§à²¾à²¨à²¿à²• à²…à²¡à²¿à²ªà²¾à²¯à²µà²¾à²—à²¿à²¦à³à²¦à³, à²œà²¨à²° à²¸à²®à³à²®à²¤à²¿à²¯à³Šà²‚à²¦à²¿à²—à³† à²¸à²°à³à²•à²¾à²°à²µà²¨à³à²¨à³ à²†à²¯à³à²•à³† à²®à²¾à²¡à³à²µ à²®à²¾à²°à³à²—à²µà²¾à²—à²¿à²¦à³†.'
+      },
+      howItWorks: {
+        en: mode === 'simple'
+          ? 'Elections allow citizens to cast confidential ballots for representatives who best understand their community needs.'
+          : 'The election cycle proceeds systematically through announcement, candidate nomination, legal scrutiny, campaigns, confidential polling, and audited vote counting.',
+        kn: mode === 'simple'
+          ? 'à²šà³à²¨à²¾à²µà²£à³†à²—à²³à³ à²ªà³à²°à²œà³†à²—à²³à²¿à²—à³† à²¤à²®à³à²® à²ªà³à²°à²¤à²¿à²¨à²¿à²§à²¿à²—à²³à²¿à²—à³† à²°à²¹à²¸à³à²¯ à²®à²¤à²¦à²¾à²¨ à²®à²¾à²¡à²²à³ à²…à²¨à³à²®à²¤à²¿ à²¨à³€à²¡à³à²¤à³à²¤à²µà³†.'
+          : 'à²šà³à²¨à²¾à²µà²£à²¾ à²ªà³à²°à²•à³à²°à²¿à²¯à³†à²¯à³ à²…à²§à²¿à²¸à³‚à²šà²¨à³†, à²¨à²¾à²®à²ªà²¤à³à²° à²¸à²²à³à²²à²¿à²•à³†, à²ªà²°à²¿à²¶à³€à²²à²¨à³†, à²ªà³à²°à²šà²¾à²°, à²°à²¹à²¸à³à²¯ à²®à²¤à²¦à²¾à²¨ à²®à²¤à³à²¤à³ à²ªà²°à²¿à²¶à³€à²²à²¿à²¤ à²Žà²£à²¿à²•à³†à²¯ à²®à³‚à²²à²• à²µà³à²¯à²µà²¸à³à²¥à²¿à²¤à²µà²¾à²—à²¿ à²¸à²¾à²—à³à²¤à³à²¤à²¦à³†.'
+      },
+      relatedTopics: ['Election Journey', 'EVM & VVPAT', 'Electoral Roll', 'NOTA'],
+      sources: ['ELECTRA Civic Knowledge Engine', 'Representation of the People Act']
+    };
+  }
+
+  /* =========================================================================
+     3. APP CONTEXT
+     ========================================================================= */
+  const AppContext = createContext();
+
+  function AppProvider({ children }) {
+    const [language, setLanguageState] = useState(() => localStorage.getItem('electra_lang') || 'en');
+    const [theme, setThemeState] = useState(() => localStorage.getItem('electra_theme') || 'light');
+    const [highContrast, setHighContrastState] = useState(() => localStorage.getItem('electra_high_contrast') === 'true');
+    const [reducedMotion, setReducedMotionState] = useState(() => localStorage.getItem('electra_reduced_motion') === 'true');
+    const [fontScale, setFontScaleState] = useState(() => parseFloat(localStorage.getItem('electra_font_scale') || '1'));
+    const [currentView, setCurrentView] = useState('home');
+    const [isA11yModalOpen, setA11yModalOpen] = useState(false);
+    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const [progress, setProgress] = useState(() => {
+      try {
+        const saved = localStorage.getItem('electra_progress');
+        return saved ? JSON.parse(saved) : { visitedStages: [], viewedGlossaryTerms: [], quizzesCompleted: [], simulatorCompleted: false, mythsChecked: [] };
+      } catch (e) {
+        return { visitedStages: [], viewedGlossaryTerms: [], quizzesCompleted: [], simulatorCompleted: false, mythsChecked: [] };
+      }
+    });
+
+    const setLanguage = (lang) => {
+      setLanguageState(lang);
+      localStorage.setItem('electra_lang', lang);
+      document.documentElement.lang = lang;
+    };
+
+    const setTheme = (t) => {
+      setThemeState(t);
+      localStorage.setItem('electra_theme', t);
+    };
+
+    useEffect(() => {
+      const root = document.documentElement;
+      root.setAttribute('data-theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+      const root = document.documentElement;
+      root.setAttribute('data-high-contrast', highContrast ? 'true' : 'false');
+      root.setAttribute('data-reduced-motion', reducedMotion ? 'true' : 'false');
+      root.style.setProperty('--font-scale', fontScale.toString());
+    }, [highContrast, reducedMotion, fontScale]);
+
+    const setHighContrast = (val) => {
+      setHighContrastState(val);
+      localStorage.setItem('electra_high_contrast', val ? 'true' : 'false');
+    };
+
+    const setReducedMotion = (val) => {
+      setReducedMotionState(val);
+      localStorage.setItem('electra_reduced_motion', val ? 'true' : 'false');
+    };
+
+    const setFontScale = (val) => {
+      setFontScaleState(val);
+      localStorage.setItem('electra_font_scale', val.toString());
+    };
+
+    const saveProgress = (updated) => {
+      setProgress(updated);
+      localStorage.setItem('electra_progress', JSON.stringify(updated));
+    };
+
+    const markStageVisited = (stageId) => {
+      if (!progress.visitedStages.includes(stageId)) {
+        saveProgress({ ...progress, visitedStages: [...progress.visitedStages, stageId] });
+      }
+    };
+
+    const markGlossaryViewed = (termId) => {
+      if (!progress.viewedGlossaryTerms.includes(termId)) {
+        saveProgress({ ...progress, viewedGlossaryTerms: [...progress.viewedGlossaryTerms, termId] });
+      }
+    };
+
+    const recordQuizScore = (score, total) => {
+      saveProgress({
+        ...progress,
+        quizzesCompleted: [...progress.quizzesCompleted, { score, total, timestamp: Date.now() }]
+      });
+    };
+
+    const markSimulatorCompleted = () => {
+      saveProgress({ ...progress, simulatorCompleted: true });
+    };
+
+    const markMythChecked = (mythId) => {
+      if (!progress.mythsChecked.includes(mythId)) {
+        saveProgress({ ...progress, mythsChecked: [...progress.mythsChecked, mythId] });
+      }
+    };
+
+    const resetProgress = () => {
+      const resetState = { visitedStages: [], viewedGlossaryTerms: [], quizzesCompleted: [], simulatorCompleted: false, mythsChecked: [] };
+      saveProgress(resetState);
+    };
+
+    const t = translations[language] || translations.en;
+
+    return h(AppContext.Provider, {
+      value: {
+        language,
+        setLanguage,
+        theme,
+        setTheme,
+        highContrast,
+        setHighContrast,
+        reducedMotion,
+        setReducedMotion,
+        fontScale,
+        setFontScale,
+        currentView,
+        setCurrentView,
+        progress,
+        markStageVisited,
+        markGlossaryViewed,
+        recordQuizScore,
+        markSimulatorCompleted,
+        markMythChecked,
+        resetProgress,
+        isA11yModalOpen,
+        setA11yModalOpen,
+        isMobileMenuOpen,
+        setMobileMenuOpen,
+        t
+      }
+    }, children);
+  }
+
+  function useApp() {
+    return useContext(AppContext);
+  }
+
+  /* =========================================================================
+     4. SVG ICONS & COMMON COMPONENTS
+     ========================================================================= */
+  function IconVoteBox({ size = 20, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('path', { d: 'm9 12 2 2 4-4' }),
+      h('rect', { width: '18', height: '18', x: '3', y: '3', rx: '2' })
+    );
+  }
+  function IconCheck({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('polyline', { points: '20 6 9 17 4 12' })
+    );
+  }
+  function IconChevronRight({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('polyline', { points: '9 18 15 12 9 6' })
+    );
+  }
+  function IconChevronLeft({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('polyline', { points: '15 18 9 12 15 6' })
+    );
+  }
+  function IconSun({ size = 17, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('circle', { cx: '12', cy: '12', r: '5' }),
+      h('line', { x1: '12', y1: '1', x2: '12', y2: '3' }),
+      h('line', { x1: '12', y1: '21', x2: '12', y2: '23' }),
+      h('line', { x1: '4.22', y1: '4.22', x2: '5.64', y2: '5.64' }),
+      h('line', { x1: '18.36', y1: '18.36', x2: '19.78', y2: '19.78' }),
+      h('line', { x1: '1', y1: '12', x2: '3', y2: '12' }),
+      h('line', { x1: '21', y1: '12', x2: '23', y2: '12' }),
+      h('line', { x1: '4.22', y1: '19.78', x2: '5.64', y2: '18.36' }),
+      h('line', { x1: '18.36', y1: '5.64', x2: '19.78', y2: '4.22' })
+    );
+  }
+  function IconMoon({ size = 17, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('path', { d: 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' })
+    );
+  }
+  function IconSearch({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('circle', { cx: '11', cy: '11', r: '8' }),
+      h('line', { x1: '21', y1: '21', x2: '16.65', y2: '16.65' })
+    );
+  }
+  function IconSparkles({ size = 16, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('path', { d: 'm12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z' })
+    );
+  }
+  function IconShield({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('path', { d: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' }),
+      h('line', { x1: '12', y1: '8', x2: '12', y2: '12' }),
+      h('line', { x1: '12', y1: '16', x2: '12.01', y2: '16' })
+    );
+  }
+  function IconAward({ size = 20, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('circle', { cx: '12', cy: '8', r: '7' }),
+      h('polyline', { points: '8.21 13.89 7 23 12 20 17 23 15.79 13.88' })
+    );
+  }
+  function IconBook({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('path', { d: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z' }),
+      h('path', { d: 'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z' })
+    );
+  }
+  function IconGlobe({ size = 15, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('circle', { cx: '12', cy: '12', r: '10' }),
+      h('line', { x1: '2', y1: '12', x2: '22', y2: '12' }),
+      h('path', { d: 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z' })
+    );
+  }
+  function IconSettings({ size = 17, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('circle', { cx: '12', cy: '12', r: '3' }),
+      h('path', { d: 'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z' })
+    );
+  }
+  function IconMenu({ size = 20, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('line', { x1: '3', y1: '12', x2: '21', y2: '12' }),
+      h('line', { x1: '3', y1: '6', x2: '21', y2: '6' }),
+      h('line', { x1: '3', y1: '18', x2: '21', y2: '18' })
+    );
+  }
+  function IconClose({ size = 18, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('line', { x1: '18', y1: '6', x2: '6', y2: '18' }),
+      h('line', { x1: '6', y1: '6', x2: '18', y2: '18' })
+    );
+  }
+  function IconRefresh({ size = 16, color = 'currentColor' }) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' },
+      h('polyline', { points: '23 4 23 10 17 10' }),
+      h('polyline', { points: '1 20 1 14 7 14' }),
+      h('path', { d: 'M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15' })
+    );
+  }
+
+  // Reusable components
+  function Button({ variant = 'primary', size = 'md', children, icon, className = '', disabled, onClick, style = {} }) {
+    const sizePadding = size === 'sm' ? '6px 12px' : size === 'lg' ? '13px 24px' : '10px 18px';
+    const sizeFont = size === 'sm' ? '13px' : size === 'lg' ? '16px' : '14px';
+
+    return h('button', {
+      className: `btn btn-${variant} ${className}`,
+      style: { padding: sizePadding, fontSize: sizeFont, ...style },
+      disabled,
+      onClick
+    },
+      icon && h('span', { style: { display: 'inline-flex' } }, icon),
+      children
+    );
+  }
+
+  function Card({ children, interactive = false, className = '', onClick, style = {} }) {
+    return h('div', {
+      className: `electra-card ${interactive ? 'interactive' : ''} ${className}`,
+      onClick,
+      style: { cursor: interactive || onClick ? 'pointer' : 'default', ...style }
+    }, children);
+  }
+
+  function Badge({ variant = 'default', children, icon, style = {} }) {
+    return h('span', {
+      className: `electra-badge ${variant}`,
+      style: { display: 'inline-flex', alignItems: 'center', gap: '6px', ...style }
+    },
+      icon && h('span', { style: { display: 'inline-flex' } }, icon),
+      children
+    );
+  }
+
+  function ProgressBar({ value, height = 8, color = 'var(--accent-primary)' }) {
+    const clamped = Math.min(100, Math.max(0, value));
+    return h('div', {
+      style: { width: '100%', height: `${height}px`, backgroundColor: 'var(--bg-muted)', borderRadius: '999px', overflow: 'hidden' }
+    },
+      h('div', {
+        style: { width: `${clamped}%`, height: '100%', backgroundColor: color, borderRadius: '999px', transition: 'width 400ms cubic-bezier(0.16, 1, 0.3, 1)' }
+      })
+    );
+  }
+
+  function Modal({ isOpen, onClose, title, children }) {
+    if (!isOpen) return null;
+
+    return h('div', {
+      style: {
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0,0,0,0.55)',
+        backdropFilter: 'blur(4px)',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px'
+      },
+      onClick: onClose
+    },
+      h('div', {
+        style: {
+          width: '100%',
+          maxWidth: '480px',
+          backgroundColor: 'var(--bg-card)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-lg)',
+          overflow: 'hidden'
+        },
+        onClick: (e) => e.stopPropagation()
+      },
+        h('div', {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '18px 24px',
+            borderBottom: '1px solid var(--border-subtle)'
+          }
+        },
+          h('h3', { style: { fontSize: '18px', fontWeight: 600 } }, title),
+          h('button', { onClick: onClose, style: { padding: '6px', color: 'var(--text-secondary)' } }, h(IconClose, { size: 18 }))
+        ),
+        h('div', { style: { padding: '24px' } }, children)
+      )
+    );
+  }
+
+  /* =========================================================================
+     5. HEADER & FOOTER & ACCESSIBILITY MODAL
+     ========================================================================= */
+  function Header() {
+    const { currentView, setCurrentView, language, setLanguage, theme, setTheme, setA11yModalOpen, isMobileMenuOpen, setMobileMenuOpen, t } = useApp();
+
+    const navItems = [
+      { view: 'home', label: t.nav.home },
+      { view: 'explore', label: t.nav.explore },
+      { view: 'journey', label: t.nav.journey },
+      { view: 'simulator', label: t.nav.simulator },
+      { view: 'glossary', label: t.nav.glossary },
+      { view: 'quiz', label: t.nav.quiz },
+      { view: 'mythfact', label: t.nav.mythFact },
+      { view: 'ai', label: t.nav.ai },
+      { view: 'about', label: t.nav.about }
+    ];
+
+    const handleNav = (v) => {
+      setCurrentView(v);
+      setMobileMenuOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    return h('div', null,
+      h('div', { className: 'disclaimer-banner' },
+        h('span', { style: { fontWeight: 600, color: 'var(--warm-accent)', textTransform: 'uppercase', letterSpacing: '0.04em' } }, 'Educational Platform:'),
+        h('span', null, t.simulationNotice)
+      ),
+      h('header', { className: 'electra-header' },
+        h('div', { className: 'container', style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '68px' } },
+          // Brand
+          h('div', {
+            onClick: () => handleNav('home'),
+            style: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }
+          },
+            h('div', {
+              style: {
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                backgroundColor: 'var(--accent-primary)',
+                color: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(37,99,235,0.3)'
+              }
+            }, h(IconVoteBox, { size: 20, color: '#FFFFFF' })),
+            h('div', null,
+              h('span', { style: { fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em', display: 'block', lineHeight: 1.1 } }, t.brand),
+              h('span', { style: { fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase' } }, 'Civic Intelligence')
+            )
+          ),
+          // Desktop Nav
+          h('nav', { className: 'desktop-nav', style: { display: 'none', gap: '4px', alignItems: 'center' } },
+            navItems.map((item) => {
+              const isActive = currentView === item.view;
+              return h('button', {
+                key: item.view,
+                onClick: () => handleNav(item.view),
+                style: {
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '13.5px',
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  backgroundColor: isActive ? 'var(--accent-subtle)' : 'transparent',
+                  transition: 'all var(--transition-fast)'
+                }
+              }, item.label);
+            })
+          ),
+          // Controls
+          h('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+            h('button', {
+              onClick: () => setLanguage(language === 'en' ? 'kn' : 'en'),
+              title: 'Toggle Language',
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 10px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                fontSize: '12px',
+                fontWeight: 600
+              }
+            }, h(IconGlobe, { size: 14 }), h('span', null, language === 'en' ? 'à²•à²¨à³à²¨à²¡' : 'EN')),
+            h('button', {
+              onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+              title: 'Toggle Theme',
+              style: {
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }
+            }, theme === 'dark' ? h(IconSun, { size: 17 }) : h(IconMoon, { size: 17 })),
+            h('button', {
+              onClick: () => setA11yModalOpen(true),
+              title: 'Accessibility Controls',
+              style: {
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }
+            }, h(IconSettings, { size: 17 })),
+            h('button', {
+              onClick: () => setMobileMenuOpen(!isMobileMenuOpen),
+              className: 'mobile-menu-btn',
+              style: {
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }
+            }, isMobileMenuOpen ? h(IconClose, { size: 18 }) : h(IconMenu, { size: 18 }))
+          )
+        ),
+        isMobileMenuOpen && h('div', {
+          style: {
+            padding: '16px 20px 24px',
+            borderTop: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-card)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px'
+          }
+        },
+          navItems.map((item) => {
+            const isActive = currentView === item.view;
+            return h('button', {
+              key: item.view,
+              onClick: () => handleNav(item.view),
+              style: {
+                padding: '12px 14px',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '15px',
+                fontWeight: isActive ? 600 : 500,
+                textAlign: 'left',
+                color: isActive ? 'var(--accent-text)' : 'var(--text-primary)',
+                backgroundColor: isActive ? 'var(--accent-subtle)' : 'transparent'
+              }
+            }, item.label);
+          })
+        )
+      )
+    );
+  }
+
+  function AccessibilityModal() {
+    const { isA11yModalOpen, setA11yModalOpen, fontScale, setFontScale, highContrast, setHighContrast, reducedMotion, setReducedMotion, t } = useApp();
+
+    return h(Modal, {
+      isOpen: isA11yModalOpen,
+      onClose: () => setA11yModalOpen(false),
+      title: t.a11y.title
+    },
+      h('div', { style: { display: 'flex', flexDirection: 'column', gap: '22px' } },
+        h('div', null,
+          h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '6px' } },
+            h('span', { style: { fontWeight: 600, fontSize: '15px' } }, t.a11y.fontSize),
+            h('span', { style: { fontSize: '13px', color: 'var(--text-muted)' } }, `${Math.round(fontScale * 100)}%`)
+          ),
+          h('p', { style: { fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '10px' } }, t.a11y.fontSizeDesc),
+          h('div', { style: { display: 'flex', gap: '8px' } },
+            h(Button, { variant: fontScale === 0.9 ? 'primary' : 'outline', size: 'sm', onClick: () => setFontScale(0.9) }, 'Compact 90%'),
+            h(Button, { variant: fontScale === 1.0 ? 'primary' : 'outline', size: 'sm', onClick: () => setFontScale(1.0) }, 'Default 100%'),
+            h(Button, { variant: fontScale === 1.15 ? 'primary' : 'outline', size: 'sm', onClick: () => setFontScale(1.15) }, 'Large 115%')
+          )
+        ),
+        h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' } },
+          h('div', null,
+            h('span', { style: { fontWeight: 600, fontSize: '15px' } }, t.a11y.contrast),
+            h('p', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, t.a11y.contrastDesc)
+          ),
+          h('input', {
+            type: 'checkbox',
+            checked: highContrast,
+            onChange: (e) => setHighContrast(e.target.checked),
+            style: { width: '18px', height: '18px', cursor: 'pointer' }
+          })
+        ),
+        h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' } },
+          h('div', null,
+            h('span', { style: { fontWeight: 600, fontSize: '15px' } }, t.a11y.motion),
+            h('p', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, t.a11y.motionDesc)
+          ),
+          h('input', {
+            type: 'checkbox',
+            checked: reducedMotion,
+            onChange: (e) => setReducedMotion(e.target.checked),
+            style: { width: '18px', height: '18px', cursor: 'pointer' }
+          })
+        ),
+        h('div', { style: { paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'flex-end', gap: '8px' } },
+          h(Button, {
+            variant: 'ghost',
+            size: 'sm',
+            onClick: () => { setFontScale(1.0); setHighContrast(false); setReducedMotion(false); }
+          }, t.a11y.reset),
+          h(Button, { variant: 'primary', size: 'sm', onClick: () => setA11yModalOpen(false) }, 'Done')
+        )
+      )
+    );
+  }
+
+  function Footer() {
+    const { t, setCurrentView, progress, resetProgress } = useApp();
+
+    return h('footer', {
+      style: {
+        backgroundColor: 'var(--bg-secondary)',
+        borderTop: '1px solid var(--border-subtle)',
+        padding: '56px 0 36px',
+        marginTop: '80px',
+        color: 'var(--text-secondary)'
+      }
+    },
+      h('div', { className: 'container' },
+        h('div', {
+          style: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '40px',
+            marginBottom: '40px'
+          }
+        },
+          // Col 1
+          h('div', null,
+            h('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: 'var(--text-primary)' } },
+              h(IconVoteBox, { size: 22, color: 'var(--accent-primary)' }),
+              h('span', { style: { fontSize: '18px', fontWeight: 700 } }, t.brand)
+            ),
+            h('p', { style: { fontSize: '14px', lineHeight: 1.6, marginBottom: '16px' } }, t.heroSub),
+            h('div', {
+              style: {
+                fontSize: '12px',
+                padding: '10px 14px',
+                backgroundColor: 'var(--bg-card)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--warm-accent)',
+                lineHeight: 1.5
+              }
+            }, h('strong', null, 'Educational Simulation: '), 'No real votes are cast, and no real credentials or biometrics are ever requested.')
+          ),
+          // Col 2: Nav
+          h('div', null,
+            h('h4', { style: { fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.04em' } }, 'Quick Navigation'),
+            h('ul', { style: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' } },
+              h('li', null, h('button', { onClick: () => { setCurrentView('journey'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.journey)),
+              h('li', null, h('button', { onClick: () => { setCurrentView('simulator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.simulator)),
+              h('li', null, h('button', { onClick: () => { setCurrentView('glossary'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.glossary)),
+              h('li', null, h('button', { onClick: () => { setCurrentView('quiz'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.quiz)),
+              h('li', null, h('button', { onClick: () => { setCurrentView('mythfact'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.mythFact)),
+              h('li', null, h('button', { onClick: () => { setCurrentView('ai'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, style: { color: 'var(--text-secondary)' } }, t.nav.ai))
+            )
+          ),
+          // Col 3: Tracker
+          h('div', null,
+            h('h4', { style: { fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.04em' } }, 'Your Learning Tracker'),
+            h('div', {
+              style: {
+                backgroundColor: 'var(--bg-card)',
+                padding: '16px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '13px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }
+            },
+              h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+                h('span', null, 'Stages Explored:'),
+                h('strong', null, `${progress.visitedStages.length} / 7`)
+              ),
+              h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+                h('span', null, 'Glossary Terms Read:'),
+                h('strong', null, progress.viewedGlossaryTerms.length)
+              ),
+              h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+                h('span', null, 'Simulator Completed:'),
+                h('strong', { style: { color: progress.simulatorCompleted ? 'var(--success)' : 'var(--text-muted)' } }, progress.simulatorCompleted ? 'Yes' : 'Not yet')
+              ),
+              h('button', {
+                onClick: resetProgress,
+                style: {
+                  marginTop: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '6px 10px',
+                  backgroundColor: 'var(--bg-muted)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '12px',
+                  color: 'var(--text-secondary)'
+                }
+              }, h(IconRefresh, { size: 14 }), h('span', null, 'Reset Learning Progress'))
+            )
+          )
+        ),
+        h('div', {
+          style: {
+            borderTop: '1px solid var(--border-subtle)',
+            paddingTop: '24px',
+            fontSize: '12px',
+            lineHeight: 1.6,
+            color: 'var(--text-muted)'
+          }
+        },
+          h('p', { style: { marginBottom: '6px' } }, t.officialNotice),
+          h('p', null, 'ELECTRA is built for election awareness and civic education. Candidate names in simulators are fictional.')
+        )
+      )
+    );
+  }
+
+  /* =========================================================================
+     6. VIEWS
+     ========================================================================= */
+
+  // VIEW 1: HOME
+  function HomeView() {
+    const { t, setCurrentView } = useApp();
+
+    const paths = [
+      { id: 'understand', title: t.paths.understand.title, desc: t.paths.understand.desc, icon: h(IconBook, { size: 20, color: 'var(--accent-primary)' }), action: () => setCurrentView('explore'), label: 'Start with Basics' },
+      { id: 'explore', title: t.paths.explore.title, desc: t.paths.explore.desc, icon: h(IconChevronRight, { size: 20, color: 'var(--accent-primary)' }), action: () => setCurrentView('journey'), label: 'Walk the 7 Stages' },
+      { id: 'experience', title: t.paths.experience.title, desc: t.paths.experience.desc, icon: h(IconVoteBox, { size: 20, color: 'var(--warm-accent)' }), action: () => setCurrentView('simulator'), label: 'Demo Polling Booth' },
+      { id: 'test', title: t.paths.test.title, desc: t.paths.test.desc, icon: h(IconAward, { size: 20, color: 'var(--success)' }), action: () => setCurrentView('quiz'), label: 'Take Civic Quiz' }
+    ];
+
+    const curriculum = [
+      { title: '1. What Is An Election?', desc: 'The constitutional mechanism whereby eligible citizens choose representatives to make laws and govern.', view: 'explore' },
+      { title: '2. How Elections Work', desc: 'A synchronized national exercise regulated by strict legal codes, neutral officers, and public audit trails.', view: 'journey' },
+      { title: '3. Before Polling', desc: 'Electoral roll preparation, formal nomination papers, sworn affidavits, and campaign rules.', view: 'journey' },
+      { title: '4. During Polling', desc: 'Mock polls, voter ID verification, indelible ink application, and secret ballot casting inside compartments.', view: 'journey' },
+      { title: '5. After Polling', desc: 'Double-locking of EVMs, 24/7 CCTV strongroom security, round-wise vote counting, and declaration.', view: 'journey' },
+      { title: '6. Counting & Results', desc: 'Transparent tabulation in the presence of candidate agents, postal vote audits, and VVPAT matching.', view: 'journey' },
+      { title: '7. Election Terminology', desc: 'Clear definitions for crucial terms like Electoral Roll, EVM, VVPAT, NOTA, and Scrutiny.', view: 'glossary' },
+      { title: '8. Common Questions', desc: 'Fact-checked answers to common misconceptions regarding voter ID requirements and ballot secrecy.', view: 'mythfact' }
+    ];
+
+    return h('div', { className: 'fade-in' },
+      // Hero
+      h('section', { style: { padding: '64px 0 48px', textAlign: 'center' } },
+        h('div', { className: 'container', style: { maxWidth: '840px' } },
+          h(Badge, { variant: 'simulation', style: { marginBottom: '20px' } }, t.simulator.badge),
+          h('h1', { style: { fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 800, lineHeight: 1.12, letterSpacing: '-0.03em', marginBottom: '16px' } }, t.brand),
+          h('p', { style: { fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', fontWeight: 600, color: 'var(--accent-primary)', marginBottom: '16px' } }, `â€œ${t.tagline}â€`),
+          h('p', { style: { fontSize: '17px', lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: '36px', maxWidth: '680px', margin: '0 auto 36px' } }, t.heroSub),
+          h('div', { style: { display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' } },
+            h(Button, { size: 'lg', variant: 'primary', onClick: () => setCurrentView('journey'), icon: h(IconChevronRight, { size: 18, color: '#FFF' }) }, t.heroCtaExplore),
+            h(Button, { size: 'lg', variant: 'secondary', onClick: () => setCurrentView('simulator'), icon: h(IconVoteBox, { size: 18, color: 'var(--accent-primary)' }) }, t.heroCtaExperience)
+          )
+        )
+      ),
+      // 4 Pillars
+      h('section', { style: { padding: '24px 0 48px' } },
+        h('div', { className: 'container' },
+          h('div', { className: 'grid-4' },
+            paths.map((p) => h(Card, { key: p.id, interactive: true, onClick: p.action, style: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '190px' } },
+              h('div', null,
+                h('div', { style: { width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' } }, p.icon),
+                h('h3', { style: { fontSize: '18px', fontWeight: 600, marginBottom: '8px' } }, p.title),
+                h('p', { style: { fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 } }, p.desc)
+              ),
+              h('div', { style: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600, color: 'var(--accent-primary)', marginTop: '16px' } },
+                h('span', null, p.label),
+                h(IconChevronRight, { size: 13 })
+              )
+            ))
+          )
+        )
+      ),
+      // Metric Strip
+      h('section', { style: { padding: '16px 0 48px' } },
+        h('div', { className: 'container' },
+          h('div', {
+            style: {
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '24px 32px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '24px',
+              textAlign: 'center'
+            }
+          },
+            h('div', null, h('span', { style: { fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)', display: 'block' } }, '7 Stages'), h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, 'Chronological Journey')),
+            h('div', null, h('span', { style: { fontSize: '28px', fontWeight: 800, color: 'var(--success)', display: 'block' } }, '100% Secret'), h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, 'Ballot Confidentiality')),
+            h('div', null, h('span', { style: { fontSize: '28px', fontWeight: 800, color: 'var(--warm-accent)', display: 'block' } }, '7 Seconds'), h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, 'VVPAT Paper Audit Slip')),
+            h('div', null, h('span', { style: { fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', display: 'block' } }, 'Non-Partisan'), h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, 'Zero Political Bias'))
+          )
+        )
+      ),
+      // 8 Modules
+      h('section', { style: { padding: '16px 0 64px' } },
+        h('div', { className: 'container' },
+          h('div', { style: { marginBottom: '28px' } },
+            h('h2', { style: { fontSize: '24px', fontWeight: 700, marginBottom: '6px' } }, 'Election Awareness Curriculum'),
+            h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, 'Explore the critical components of the democratic voting lifecycle.')
+          ),
+          h('div', { className: 'grid-2' },
+            curriculum.map((c, i) => h(Card, { key: i, interactive: true, onClick: () => setCurrentView(c.view), style: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between' } },
+              h('div', null,
+                h('h3', { style: { fontSize: '16px', fontWeight: 600, marginBottom: '8px' } }, c.title),
+                h('p', { style: { fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.55 } }, c.desc)
+              ),
+              h('div', { style: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: 'var(--accent-primary)', marginTop: '16px' } },
+                h('span', null, 'Explore topic'),
+                h(IconChevronRight, { size: 12 })
+              )
+            ))
+          )
+        )
+      ),
+      // AI Callout
+      h('section', { style: { padding: '0 0 56px' } },
+        h('div', { className: 'container' },
+          h('div', {
+            style: {
+              backgroundColor: 'var(--accent-subtle)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '24px',
+              flexWrap: 'wrap'
+            }
+          },
+            h('div', { style: { maxWidth: '600px' } },
+              h(Badge, { variant: 'accent', icon: h(IconSparkles, { size: 14 }), style: { marginBottom: '12px' } }, 'AI Civic Assistant'),
+              h('h3', { style: { fontSize: '20px', fontWeight: 700, marginBottom: '8px' } }, 'Have questions about voting or election rules?'),
+              h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 } }, 'Ask ELECTRA AI for instant, non-partisan, fact-checked explanations in simple or detailed terms.')
+            ),
+            h(Button, { variant: 'primary', size: 'md', onClick: () => setCurrentView('ai'), icon: h(IconSparkles, { size: 16 }) }, 'Open Ask ELECTRA AI')
+          )
+        )
+      )
+    );
+  }
+
+  // VIEW 2: ELECTION JOURNEY
+  function ElectionJourneyView() {
+    const { language, t, markStageVisited, progress, setCurrentView } = useApp();
+    const [selectedStageId, setSelectedStageId] = useState('announcement');
+    const [phaseFilter, setPhaseFilter] = useState('all');
+
+    const filtered = electionStages.filter((s) => phaseFilter === 'all' || s.phase === phaseFilter);
+    const selected = electionStages.find((s) => s.id === selectedStageId) || electionStages[0];
+
+    const handleSelect = (id) => {
+      setSelectedStageId(id);
+      markStageVisited(id);
+    };
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 60px' } },
+      h('div', { style: { maxWidth: '800px', marginBottom: '32px' } },
+        h(Badge, { variant: 'accent', style: { marginBottom: '12px' } }, '7 Chronological Stages'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '12px' } }, t.nav.journey),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 } },
+          'Walk through the complete lifecycle of a democratic election. Note that specific deadlines and procedures may differ across jurisdictions; the steps below reflect standard universal democratic safeguards.'
+        )
+      ),
+      // Tabs
+      h('div', { style: { display: 'flex', gap: '8px', marginBottom: '28px', flexWrap: 'wrap' } },
+        [
+          { id: 'all', label: 'All 7 Stages' },
+          { id: 'before', label: 'Before Polling (Stages 1â€“4)' },
+          { id: 'during', label: 'During Polling (Stage 5)' },
+          { id: 'after', label: 'After Polling (Stages 6â€“7)' }
+        ].map((tab) => {
+          const isActive = phaseFilter === tab.id;
+          return h('button', {
+            key: tab.id,
+            onClick: () => setPhaseFilter(tab.id),
+            style: {
+              padding: '8px 16px',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '13px',
+              fontWeight: 600,
+              backgroundColor: isActive ? 'var(--accent-primary)' : 'var(--bg-card)',
+              color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+              border: `1px solid ${isActive ? 'transparent' : 'var(--border-subtle)'}`,
+              transition: 'all var(--transition-fast)'
+            }
+          }, tab.label);
+        })
+      ),
+      // 2-Col Layout
+      h('div', { className: 'grid-2', style: { alignItems: 'start' } },
+        // Left Column (List)
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+          filtered.map((stage) => {
+            const isSelected = stage.id === selectedStageId;
+            const isVisited = progress.visitedStages.includes(stage.id);
+
+            return h('div', {
+              key: stage.id,
+              onClick: () => handleSelect(stage.id),
+              style: {
+                padding: '16px',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: isSelected ? 'var(--bg-card-hover)' : 'var(--bg-card)',
+                border: `1.5px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+                boxShadow: isSelected ? 'var(--shadow-md)' : 'none'
+              }
+            },
+              h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '6px' } },
+                h('span', { style: { fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-primary)', letterSpacing: '0.04em' } }, `Stage ${stage.order}`),
+                isVisited && h('span', { style: { fontSize: '11px', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 600 } }, h(IconCheck, { size: 12, color: 'var(--success)' }), 'Explored')
+              ),
+              h('h4', { style: { fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' } }, stage.title[language] || stage.title.en),
+              h('p', { style: { fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: 1.4 } }, stage.shortDesc[language] || stage.shortDesc.en)
+            );
+          })
+        ),
+        // Right Column (Details)
+        h(Card, { style: { padding: '32px' } },
+          h('div', { style: { borderBottom: '1px solid var(--border-subtle)', paddingBottom: '18px', marginBottom: '22px' } },
+            h(Badge, { variant: 'accent', style: { marginBottom: '8px' } }, `Phase: ${selected.phase.toUpperCase()} POLLING`),
+            h('h2', { style: { fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)' } }, selected.title[language] || selected.title.en)
+          ),
+          h('div', { style: { display: 'flex', flexDirection: 'column', gap: '22px' } },
+            h('div', null,
+              h('h4', { style: { fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '6px' } }, 'What Happens in this Stage'),
+              h('p', { style: { fontSize: '14.5px', lineHeight: 1.65 } }, selected.whatHappens[language] || selected.whatHappens.en)
+            ),
+            h('div', { style: { backgroundColor: 'var(--bg-secondary)', padding: '16px 18px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' } },
+              h('h4', { style: { fontSize: '12.5px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-text)', letterSpacing: '0.04em', marginBottom: '6px' } }, 'Why It Matters to Citizens'),
+              h('p', { style: { fontSize: '13.5px', lineHeight: 1.6, color: 'var(--text-secondary)' } }, selected.whyItMatters[language] || selected.whyItMatters.en)
+            ),
+            h('div', null,
+              h('h4', { style: { fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '6px' } }, 'Key Participants Involved'),
+              h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, selected.whoIsInvolved[language] || selected.whoIsInvolved.en)
+            ),
+            h('div', null,
+              h('h4', { style: { fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '8px' } }, 'Statutory Rules & Integrity Safeguards'),
+              h('ul', { style: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' } },
+                selected.rules.map((r, i) => h('li', { key: i, style: { display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' } },
+                  h('span', { style: { color: 'var(--accent-primary)', flexShrink: 0 } }, 'âœ“'),
+                  h('span', null, r[language] || r.en)
+                ))
+              )
+            ),
+            h('div', null,
+              h('h4', { style: { fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', marginBottom: '6px' } }, 'Associated Terminology'),
+              h('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap' } },
+                selected.terms.map((tItem, idx) => h('span', {
+                  key: idx,
+                  onClick: () => setCurrentView('glossary'),
+                  style: { padding: '4px 8px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-muted)', fontSize: '12px', cursor: 'pointer' }
+                }, `${tItem} â†—`))
+              )
+            ),
+            h('div', { style: { borderTop: '1px solid var(--border-subtle)', paddingTop: '14px', fontSize: '12px', color: 'var(--text-muted)' } },
+              h('strong', null, 'Statutory Sources: '),
+              selected.sources.map((s, idx) => h('span', { key: idx }, s.title))
+            )
+          )
+        )
+      )
+    );
+  }
+
+  // VIEW 3: VOTING SIMULATOR
+  function VotingSimulatorView() {
+    const { t, markSimulatorCompleted } = useApp();
+
+    const candidates = [
+      { id: 'alpha', name: 'Candidate Alpha', title: 'Civic Renewal & Green Spaces', focus: 'Urban reforestation, solar parks, pedestrian streets, and waste management reform.', symbol: 'ðŸŒ³ Tree Symbol', badgeColor: 'var(--success)', keyPledge: 'Zero-emission public buses and park revitalization.' },
+      { id: 'beta', name: 'Candidate Beta', title: 'Transit & Youth Opportunities', focus: 'Expanding public metro routes, vocational scholarships, and subsidized youth sports.', symbol: 'âš¡ Electric Flash Symbol', badgeColor: 'var(--accent-primary)', keyPledge: 'Night bus connectivity and free digital libraries.' },
+      { id: 'gamma', name: 'Candidate Gamma', title: 'Smart Utilities & Small Business', focus: 'Water supply modernization, micro-business tax relief, and broadband accessibility.', symbol: 'ðŸ’¡ Lamp Symbol', badgeColor: 'var(--warm-accent)', keyPledge: '24/7 potable water monitoring and streamlined licensing.' },
+      { id: 'nota', name: 'NOTA / None of the Above', title: 'Constitutional Voter Dissent', focus: 'Express dissatisfaction with all contesting candidates while maintaining official turnout.', symbol: 'âŒ NOTA Symbol', badgeColor: 'var(--text-muted)', keyPledge: 'Formal recorded rejection of candidate choices under ballot secrecy.' }
+    ];
+
+    const [step, setStep] = useState('intro'); // intro, learn, ballot, review, recorded, counting, results
+    const [selectedCandidateId, setSelectedCandidateId] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [hasVotedThisSession, setHasVotedThisSession] = useState(false);
+
+    const [demoTallies, setDemoTallies] = useState(() => {
+      try {
+        const saved = localStorage.getItem('electra_demo_tallies');
+        return saved ? JSON.parse(saved) : { alpha: 34, beta: 41, gamma: 28, nota: 12 };
+      } catch (e) {
+        return { alpha: 34, beta: 41, gamma: 28, nota: 12 };
+      }
+    });
+
+    const saveTallies = (updated) => {
+      setDemoTallies(updated);
+      localStorage.setItem('electra_demo_tallies', JSON.stringify(updated));
+    };
+
+    const selectedCand = candidates.find((c) => c.id === selectedCandidateId);
+
+    // Vote Confirmation with double-click and duplicate vote protection
+    const handleConfirmVote = () => {
+      if (!selectedCandidateId || hasVotedThisSession || isSubmitting) return;
+
+      setIsSubmitting(true);
+      const currentCount = demoTallies[selectedCandidateId] || 0;
+      const updated = { ...demoTallies, [selectedCandidateId]: currentCount + 1 };
+      saveTallies(updated);
+      setHasVotedThisSession(true);
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setStep('recorded');
+      }, 400);
+    };
+
+    const handleProceedToCounting = () => {
+      setStep('counting');
+      setTimeout(() => {
+        setStep('results');
+        markSimulatorCompleted();
+        if (window.confetti) {
+          try { window.confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } }); } catch (e) {}
+        }
+      }, 2000);
+    };
+
+    const handleRestart = () => {
+      setSelectedCandidateId(null);
+      setHasVotedThisSession(false);
+      setStep('ballot');
+    };
+
+    const handleResetAllDemoVotes = () => {
+      const baseline = { alpha: 34, beta: 41, gamma: 28, nota: 12 };
+      saveTallies(baseline);
+      handleRestart();
+    };
+
+    const totalVotes = Object.values(demoTallies).reduce((sum, n) => sum + n, 0);
+    const getPercentage = (count) => (totalVotes === 0 ? 0 : Math.round((count / totalVotes) * 100));
+
+    let leaderId = 'alpha';
+    let maxCount = -1;
+    Object.entries(demoTallies).forEach(([cid, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        leaderId = cid;
+      }
+    });
+    const leadingCandidate = candidates.find((c) => c.id === leaderId);
+
+    return h('div', { className: 'fade-in container', style: { padding: '36px 0 64px', maxWidth: '860px' } },
+      // Notice Banner
+      h('div', {
+        style: {
+          backgroundColor: 'var(--warm-subtle)',
+          border: '1px solid rgba(217, 119, 6, 0.3)',
+          borderRadius: 'var(--radius-md)',
+          padding: '16px 20px',
+          marginBottom: '28px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }
+      },
+        h('div', { style: { color: 'var(--warm-accent)', flexShrink: 0 } }, h(IconShield, { size: 24 })),
+        h('div', null,
+          h('strong', { style: { fontSize: '13px', color: 'var(--warm-accent)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' } }, t.simulator.badge),
+          h('span', { style: { fontSize: '13px', color: 'var(--text-primary)' } }, t.simulator.banner)
+        )
+      ),
+      // Stepper Label
+      h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '24px' } },
+        h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' } },
+          `Flow: ${step === 'intro' ? 'Step 1/7 (Intro)' : step === 'learn' ? 'Step 2/7 (Learn)' : step === 'ballot' ? 'Step 3/7 (Ballot)' : step === 'review' ? 'Step 4/7 (Review)' : step === 'recorded' ? 'Step 5/7 (VVPAT)' : step === 'counting' ? 'Step 6/7 (Counting)' : 'Step 7/7 (Results)'}`
+        ),
+        h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--accent-primary)' } }, 'Scenario: Demo City Council')
+      ),
+
+      // STEP 1: INTRO
+      step === 'intro' && h(Card, { style: { padding: '36px', textAlign: 'center' } },
+        h('div', {
+          style: {
+            width: '64px',
+            height: '64px',
+            borderRadius: '16px',
+            backgroundColor: 'var(--accent-subtle)',
+            color: 'var(--accent-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px'
+          }
+        }, h(IconVoteBox, { size: 32 })),
+        h('h2', { style: { fontSize: '26px', fontWeight: 700, marginBottom: '12px' } }, t.simulator.introTitle),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.65, maxWidth: '640px', margin: '0 auto 32px' } }, t.simulator.introDesc),
+        h(Button, { variant: 'primary', size: 'lg', onClick: () => setStep('learn'), icon: h(IconChevronRight, { size: 18, color: '#FFF' }) }, t.simulator.btnStart)
+      ),
+
+      // STEP 2: LEARN
+      step === 'learn' && h(Card, { style: { padding: '36px' } },
+        h('h2', { style: { fontSize: '24px', fontWeight: 700, marginBottom: '8px' } }, t.simulator.step1Title),
+        h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' } }, 'Before entering any voting booth, understand these inviolable democratic principles:'),
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' } },
+          t.simulator.step1Points.map((pt, i) => h('div', {
+            key: i,
+            style: { display: 'flex', gap: '12px', padding: '14px 16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }
+          },
+            h('div', { style: { color: 'var(--success)', marginTop: '2px', flexShrink: 0 } }, h(IconCheck, { size: 18 })),
+            h('span', { style: { fontSize: '14px', lineHeight: 1.5 } }, pt)
+          ))
+        ),
+        h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+          h(Button, { variant: 'ghost', size: 'md', onClick: () => setStep('intro'), icon: h(IconChevronLeft, { size: 16 }) }, 'Back'),
+          h(Button, { variant: 'primary', size: 'md', onClick: () => setStep('ballot'), icon: h(IconChevronRight, { size: 16, color: '#FFF' }) }, 'Proceed to Demo Ballot')
+        )
+      ),
+
+      // STEP 3: BALLOT
+      step === 'ballot' && h(Card, { style: { padding: '32px' } },
+        h('div', { style: { marginBottom: '24px' } },
+          h('h2', { style: { fontSize: '22px', fontWeight: 700, marginBottom: '6px' } }, t.simulator.step2Title),
+          h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, t.simulator.step2Sub)
+        ),
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' } },
+          candidates.map((cand) => {
+            const isSelected = selectedCandidateId === cand.id;
+            return h('div', {
+              key: cand.id,
+              onClick: () => setSelectedCandidateId(cand.id),
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '18px 20px',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: isSelected ? 'var(--bg-card-hover)' : 'var(--bg-card)',
+                border: `2px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)'
+              }
+            },
+              h('div', { style: { display: 'flex', alignItems: 'center', gap: '16px' } },
+                h('div', {
+                  style: {
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    border: `2px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border-strong)'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isSelected ? 'var(--accent-primary)' : 'transparent',
+                    flexShrink: 0
+                  }
+                }, isSelected && h('div', { style: { width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FFF' } })),
+                h('div', null,
+                  h('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' } },
+                    h('span', { style: { fontWeight: 700, fontSize: '16px' } }, cand.name),
+                    h('span', { style: { fontSize: '12px', fontWeight: 600, color: cand.badgeColor } }, cand.symbol)
+                  ),
+                  h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '2px' } }, cand.title),
+                  h('span', { style: { fontSize: '12px', color: 'var(--text-muted)' } }, `Focus: ${cand.keyPledge}`)
+                )
+              ),
+              h('button', {
+                style: {
+                  padding: '8px 14px',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '12.5px',
+                  fontWeight: 600,
+                  backgroundColor: isSelected ? 'var(--accent-primary)' : 'var(--bg-secondary)',
+                  color: isSelected ? '#FFFFFF' : 'var(--text-secondary)',
+                  border: '1px solid var(--border-subtle)'
+                }
+              }, isSelected ? 'Selected' : 'Select')
+            );
+          })
+        ),
+        h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+          h(Button, { variant: 'ghost', size: 'md', onClick: () => setStep('learn'), icon: h(IconChevronLeft, { size: 16 }) }, 'Back'),
+          h(Button, {
+            variant: 'primary',
+            size: 'md',
+            disabled: !selectedCandidateId,
+            onClick: () => setStep('review'),
+            icon: h(IconChevronRight, { size: 16, color: '#FFF' })
+          }, t.simulator.btnReview)
+        )
+      ),
+
+      // STEP 4: REVIEW
+      step === 'review' && selectedCand && h(Card, { style: { padding: '36px' } },
+        h('h2', { style: { fontSize: '24px', fontWeight: 700, marginBottom: '8px' } }, t.simulator.reviewTitle),
+        h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' } }, t.simulator.reviewDesc),
+        h('div', {
+          style: {
+            padding: '24px',
+            backgroundColor: 'var(--bg-secondary)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            marginBottom: '32px'
+          }
+        },
+          h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' } }, t.simulator.selectedCandidate),
+          h('div', { style: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' } },
+            h('span', { style: { fontSize: '20px', fontWeight: 700 } }, selectedCand.name),
+            h('span', { style: { fontSize: '14px', fontWeight: 600, color: selectedCand.badgeColor } }, `(${selectedCand.symbol})`)
+          ),
+          h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, selectedCand.focus)
+        ),
+        h('div', { style: { display: 'flex', justifyContent: 'space-between' } },
+          h(Button, { variant: 'secondary', size: 'md', onClick: () => setStep('ballot'), icon: h(IconChevronLeft, { size: 16 }) }, t.simulator.btnBack),
+          h(Button, {
+            variant: 'primary',
+            size: 'md',
+            onClick: handleConfirmVote,
+            disabled: isSubmitting || hasVotedThisSession,
+            icon: h(IconVoteBox, { size: 16, color: '#FFF' })
+          }, isSubmitting ? 'Recording...' : t.simulator.btnConfirm)
+        )
+      ),
+
+      // STEP 5: RECORDED (VVPAT)
+      step === 'recorded' && selectedCand && h(Card, { style: { padding: '36px', textAlign: 'center' } },
+        h('div', {
+          style: {
+            width: '260px',
+            margin: '0 auto 24px',
+            backgroundColor: '#FFFDF0',
+            color: '#111827',
+            border: '2px dashed #D1D5DB',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            fontFamily: 'monospace'
+          }
+        },
+          h('span', { style: { fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6B7280', display: 'block', marginBottom: '4px' } }, 'VVPAT PAPER AUDIT SLIP'),
+          h('span', { style: { fontSize: '10px', color: '#9CA3AF', display: 'block', marginBottom: '12px' } }, 'Visible for 7 seconds'),
+          h('div', { style: { fontSize: '16px', fontWeight: 700, marginBottom: '4px' } }, selectedCand.name),
+          h('div', { style: { fontSize: '13px', color: '#4B5563', marginBottom: '10px' } }, selectedCand.symbol),
+          h('div', { style: { fontSize: '10px', borderTop: '1px solid #E5E7EB', paddingTop: '6px', color: '#9CA3AF' } }, 'DEMO VOTE VERIFIED â€¢ SECURE')
+        ),
+        h('h2', { style: { fontSize: '24px', fontWeight: 700, color: 'var(--success)', marginBottom: '8px' } }, t.simulator.confirmSuccessTitle),
+        h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '600px', margin: '0 auto 28px' } }, t.simulator.confirmSuccessDesc),
+        h(Button, { variant: 'primary', size: 'md', onClick: handleProceedToCounting, icon: h(IconChevronRight, { size: 16, color: '#FFF' }) }, 'Simulate Counting & Results')
+      ),
+
+      // STEP 6: COUNTING
+      step === 'counting' && h(Card, { style: { padding: '48px 36px', textAlign: 'center' } },
+        h('div', { style: { width: '48px', height: '48px', margin: '0 auto 20px', color: 'var(--accent-primary)' } }, h(IconRefresh, { size: 48 })),
+        h('h2', { style: { fontSize: '22px', fontWeight: 700, marginBottom: '8px' } }, t.simulator.countingTitle),
+        h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 24px' } }, t.simulator.countingDesc),
+        h('div', { style: { maxWidth: '380px', margin: '0 auto' } }, h(ProgressBar, { value: 80, height: 10 }))
+      ),
+
+      // STEP 7: RESULTS
+      step === 'results' && h(Card, { style: { padding: '32px' } },
+        h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' } },
+          h('div', null,
+            h(Badge, { variant: 'simulation', style: { marginBottom: '8px' } }, 'Mock Tabulation'),
+            h('h2', { style: { fontSize: '24px', fontWeight: 700 } }, t.simulator.resultsTitle),
+            h('p', { style: { fontSize: '14px', color: 'var(--text-secondary)' } }, t.simulator.resultsSub)
+          ),
+          h('div', { style: { textAlign: 'right' } },
+            h('span', { style: { fontSize: '12px', color: 'var(--text-muted)', display: 'block' } }, t.simulator.totalVotesCast),
+            h('span', { style: { fontSize: '24px', fontWeight: 800 } }, totalVotes)
+          )
+        ),
+        // Leader
+        leadingCandidate && h('div', {
+          style: {
+            padding: '16px 20px',
+            backgroundColor: 'var(--accent-subtle)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid rgba(59, 130, 246, 0.25)',
+            marginBottom: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }
+        },
+          h('div', null,
+            h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--accent-text)', textTransform: 'uppercase', letterSpacing: '0.04em' } }, t.simulator.leadingCandidate),
+            h('div', { style: { fontSize: '18px', fontWeight: 700 } }, `${leadingCandidate.name} (${leadingCandidate.symbol})`)
+          ),
+          h(Badge, { variant: 'accent' }, `${getPercentage(demoTallies[leadingCandidate.id] || 0)}% of Tally`)
+        ),
+        // Bars
+        h('div', { style: { display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '32px' } },
+          candidates.map((cand) => {
+            const count = demoTallies[cand.id] || 0;
+            const pct = getPercentage(count);
+            const isUserChoice = selectedCandidateId === cand.id;
+
+            return h('div', { key: cand.id },
+              h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '6px' } },
+                h('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+                  h('span', { style: { fontWeight: 600, fontSize: '14.5px' } }, cand.name),
+                  isUserChoice && h('span', { style: { fontSize: '11px', fontWeight: 600, color: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)', padding: '2px 8px', borderRadius: '999px' } }, 'Your Demo Vote')
+                ),
+                h('span', { style: { fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' } }, `${count} votes (${pct}%)`)
+              ),
+              h(ProgressBar, { value: pct, height: 10, color: cand.badgeColor })
+            );
+          })
+        ),
+        h('div', { style: { padding: '14px 18px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '32px' } },
+          h('strong', null, 'Civic Principle: '), t.simulator.notaNote
+        ),
+        h('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } },
+          h(Button, { variant: 'primary', size: 'md', onClick: handleRestart, icon: h(IconRefresh, { size: 16 }) }, t.simulator.btnTryAgain),
+          h(Button, { variant: 'outline', size: 'md', onClick: handleResetAllDemoVotes }, t.simulator.btnResetAll)
+        )
+      )
+    );
+  }
+
+  // VIEW 4: KNOWLEDGE HUB & GLOSSARY
+  function KnowledgeHubView() {
+    const { language, t, progress, markGlossaryViewed } = useApp();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedLetter, setSelectedLetter] = useState('all');
+
+    const categories = [
+      { id: 'all', label: t.glossary.allCategories },
+      { id: 'basics', label: t.glossary.categories.basics },
+      { id: 'voting', label: t.glossary.categories.voting },
+      { id: 'process', label: t.glossary.categories.process },
+      { id: 'counting', label: t.glossary.categories.counting }
+    ];
+
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+    const filtered = glossaryTerms.filter((item) => {
+      const termText = (item.term[language] || item.term.en).toLowerCase();
+      const defText = (item.definition[language] || item.definition.en).toLowerCase();
+      const q = searchQuery.toLowerCase().trim();
+
+      const matchesSearch = !q || termText.includes(q) || defText.includes(q);
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      const matchesLetter = selectedLetter === 'all' || item.term.en.toUpperCase().startsWith(selectedLetter);
+
+      return matchesSearch && matchesCategory && matchesLetter;
+    });
+
+    const recentlyViewed = glossaryTerms.filter((item) => progress.viewedGlossaryTerms.includes(item.id));
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 64px' } },
+      h('div', { style: { maxWidth: '800px', marginBottom: '32px' } },
+        h(Badge, { variant: 'accent', style: { marginBottom: '12px' } }, 'Civic Reference Library'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '12px' } }, t.glossary.title),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 } }, t.glossary.subtitle)
+      ),
+      // Search Box
+      h('div', { style: { position: 'relative', marginBottom: '24px' } },
+        h('div', { style: { position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' } }, h(IconSearch, { size: 18 })),
+        h('input', {
+          type: 'text',
+          value: searchQuery,
+          onChange: (e) => setSearchQuery(e.target.value),
+          placeholder: t.glossary.searchPlaceholder,
+          style: {
+            width: '100%',
+            padding: '14px 16px 14px 46px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-card)',
+            color: 'var(--text-primary)',
+            fontSize: '15px',
+            outline: 'none'
+          }
+        })
+      ),
+      // Category Pills
+      h('div', { style: { display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' } },
+        categories.map((c) => {
+          const isActive = selectedCategory === c.id;
+          return h('button', {
+            key: c.id,
+            onClick: () => setSelectedCategory(c.id),
+            style: {
+              padding: '8px 14px',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '13px',
+              fontWeight: 600,
+              backgroundColor: isActive ? 'var(--accent-primary)' : 'var(--bg-card)',
+              color: isActive ? '#FFF' : 'var(--text-secondary)',
+              border: `1px solid ${isActive ? 'transparent' : 'var(--border-subtle)'}`
+            }
+          }, c.label);
+        })
+      ),
+      // Alphabet Bar
+      h('div', { style: { display: 'flex', gap: '4px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '6px' } },
+        h('button', {
+          onClick: () => setSelectedLetter('all'),
+          style: {
+            padding: '4px 8px',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '12px',
+            fontWeight: 600,
+            backgroundColor: selectedLetter === 'all' ? 'var(--accent-primary)' : 'var(--bg-card)',
+            color: selectedLetter === 'all' ? '#FFF' : 'var(--text-secondary)',
+            border: '1px solid var(--border-subtle)'
+          }
+        }, 'ALL'),
+        alphabet.map((letter) => h('button', {
+          key: letter,
+          onClick: () => setSelectedLetter(letter),
+          style: {
+            minWidth: '28px',
+            height: '28px',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '12px',
+            fontWeight: 600,
+            backgroundColor: selectedLetter === letter ? 'var(--accent-primary)' : 'var(--bg-card)',
+            color: selectedLetter === letter ? '#FFF' : 'var(--text-secondary)',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }
+        }, letter))
+      ),
+      // Recently viewed
+      recentlyViewed.length > 0 && h('div', { style: { marginBottom: '32px' } },
+        h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' } }, `${t.glossary.recentlyViewed} (${recentlyViewed.length})`),
+        h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } },
+          recentlyViewed.map((term) => h('span', {
+            key: term.id,
+            style: { padding: '4px 10px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--accent-subtle)', color: 'var(--accent-text)', fontSize: '12px', fontWeight: 500 }
+          }, term.term[language] || term.term.en))
+        )
+      ),
+      // Grid
+      filtered.length === 0
+        ? h('div', { style: { textAlign: 'center', padding: '56px 20px', backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' } },
+          h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)' } }, t.glossary.noResults)
+        )
+        : h('div', { className: 'grid-2' },
+          filtered.map((item) => {
+            const hasRead = progress.viewedGlossaryTerms.includes(item.id);
+            return h(Card, {
+              key: item.id,
+              interactive: true,
+              onClick: () => markGlossaryViewed(item.id),
+              style: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }
+            },
+              h('div', null,
+                h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' } },
+                  h('h3', { style: { fontSize: '17px', fontWeight: 700 } }, item.term[language] || item.term.en),
+                  hasRead && h('span', { style: { fontSize: '11px', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 600 } }, h(IconCheck, { size: 12, color: 'var(--success)' }), 'Read')
+                ),
+                h('p', { style: { fontSize: '14px', lineHeight: 1.6, marginBottom: '14px' } }, item.definition[language] || item.definition.en),
+                h('div', { style: { backgroundColor: 'var(--bg-secondary)', padding: '12px 14px', borderRadius: 'var(--radius-sm)', fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 } },
+                  h('strong', { style: { color: 'var(--accent-text)' } }, `${t.glossary.whyItMatters}: `),
+                  item.whyItMatters[language] || item.whyItMatters.en
+                )
+              ),
+              item.relatedTerms && h('div', { style: { borderTop: '1px solid var(--border-subtle)', paddingTop: '10px', fontSize: '11.5px', color: 'var(--text-muted)' } },
+                h('span', null, `${t.glossary.related}: `),
+                item.relatedTerms.join(', ')
+              )
+            );
+          })
+        )
+    );
+  }
+
+  // VIEW 5: ASK ELECTRA AI
+  function AskElectraView() {
+    const { language, t, setCurrentView } = useApp();
+    const [mode, setMode] = useState('simple');
+    const [query, setQuery] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [activeResponse, setActiveResponse] = useState(null);
+
+    const sampleQueries = [
+      'What happens during polling?',
+      'What is nomination?',
+      'How does vote counting work?',
+      'What does NOTA mean?',
+      'Explain elections in simple language.',
+      'Who should I vote for?'
+    ];
+
+    const handleAsk = (qToAsk) => {
+      const q = qToAsk || query;
+      if (!q.trim()) return;
+
+      setIsLoading(true);
+      setTimeout(() => {
+        const res = findAIAnswer(q, mode);
+        setActiveResponse(res);
+        setIsLoading(false);
+      }, 350);
+    };
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 64px', maxWidth: '840px' } },
+      h('div', { style: { marginBottom: '28px' } },
+        h(Badge, { variant: 'accent', icon: h(IconSparkles, { size: 14 }), style: { marginBottom: '12px' } }, 'Civic Intelligence'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '10px' } }, t.ai.title),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 } }, t.ai.subtitle)
+      ),
+      // Mode switch & engine badge
+      h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' } },
+        h('div', { style: { display: 'flex', gap: '6px', backgroundColor: 'var(--bg-card)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' } },
+          h('button', {
+            onClick: () => setMode('simple'),
+            style: {
+              padding: '6px 14px',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '13px',
+              fontWeight: 600,
+              backgroundColor: mode === 'simple' ? 'var(--accent-primary)' : 'transparent',
+              color: mode === 'simple' ? '#FFF' : 'var(--text-secondary)'
+            }
+          }, t.ai.modeSimple),
+          h('button', {
+            onClick: () => setMode('detailed'),
+            style: {
+              padding: '6px 14px',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '13px',
+              fontWeight: 600,
+              backgroundColor: mode === 'detailed' ? 'var(--accent-primary)' : 'transparent',
+              color: mode === 'detailed' ? '#FFF' : 'var(--text-secondary)'
+            }
+          }, t.ai.modeDetailed)
+        ),
+        h('span', { style: { fontSize: '12px', color: 'var(--text-muted)' } }, t.ai.fallbackNotice)
+      ),
+      // Input
+      h('div', { style: { display: 'flex', gap: '10px', marginBottom: '20px' } },
+        h('input', {
+          type: 'text',
+          value: query,
+          onChange: (e) => setQuery(e.target.value),
+          onKeyDown: (e) => e.key === 'Enter' && handleAsk(),
+          placeholder: t.ai.placeholder,
+          style: {
+            flex: 1,
+            padding: '14px 18px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-card)',
+            color: 'var(--text-primary)',
+            fontSize: '15px',
+            outline: 'none'
+          }
+        }),
+        h(Button, {
+          variant: 'primary',
+          size: 'md',
+          onClick: () => handleAsk(),
+          disabled: !query.trim() || isLoading,
+          icon: h(IconSparkles, { size: 16, color: '#FFF' })
+        }, isLoading ? 'Thinking...' : t.ai.btnAsk)
+      ),
+      // Quick Queries
+      h('div', { style: { marginBottom: '32px' } },
+        h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' } }, t.ai.exampleQueriesLabel),
+        h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
+          sampleQueries.map((q, i) => h('button', {
+            key: i,
+            onClick: () => { setQuery(q); handleAsk(q); },
+            style: {
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-sm)',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-subtle)',
+              fontSize: '12.5px',
+              color: 'var(--text-primary)'
+            }
+          }, q))
+        )
+      ),
+      // Response Card
+      activeResponse && h(Card, { style: { padding: '32px' } },
+        h('div', {
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '10px 14px',
+            backgroundColor: 'var(--bg-secondary)',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--border-subtle)',
+            marginBottom: '24px',
+            fontSize: '12px',
+            color: 'var(--text-secondary)'
+          }
+        },
+          h(IconShield, { size: 16, color: 'var(--accent-primary)' }),
+          h('span', null, t.ai.neutralityNotice)
+        ),
+        h('div', { style: { marginBottom: '20px' } },
+          h('span', { style: { fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-primary)', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' } }, t.ai.shortAnswer),
+          h('p', { style: { fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.5 } }, activeResponse.shortAnswer[language] || activeResponse.shortAnswer.en)
+        ),
+        h('div', { style: { marginBottom: '22px', backgroundColor: 'var(--bg-secondary)', padding: '18px 20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' } },
+          h('span', { style: { fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' } }, `${t.ai.howItWorks} (${mode.toUpperCase()})`),
+          h('p', { style: { fontSize: '14.5px', lineHeight: 1.65 } }, activeResponse.howItWorks[language] || activeResponse.howItWorks.en)
+        ),
+        h('div', { style: { marginBottom: '18px' } },
+          h('span', { style: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' } }, t.ai.relatedTopics),
+          h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } },
+            activeResponse.relatedTopics.map((topic, i) => h('button', {
+              key: i,
+              onClick: () => setCurrentView('glossary'),
+              style: { padding: '4px 10px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-muted)', fontSize: '12px', color: 'var(--text-primary)' }
+            }, `${topic} â†—`))
+          )
+        ),
+        h('div', { style: { borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', fontSize: '12px', color: 'var(--text-muted)' } },
+          h('strong', null, `${t.ai.sources}: `),
+          activeResponse.sources.join(' â€¢ ')
+        )
+      )
+    );
+  }
+
+  // VIEW 6: QUIZ
+  function QuizView() {
+    const { language, t, recordQuizScore, setCurrentView } = useApp();
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedAnswers, setSelectedAnswers] = useState({});
+    const [isFinished, setIsFinished] = useState(false);
+
+    const currentQ = quizQuestions[currentIndex];
+    const totalQuestions = quizQuestions.length;
+    const isAnswered = selectedAnswers[currentIndex] !== undefined;
+
+    const handleSelect = (optIdx) => {
+      if (isAnswered) return;
+      setSelectedAnswers({ ...selectedAnswers, [currentIndex]: optIdx });
+    };
+
+    const handleNext = () => {
+      if (currentIndex < totalQuestions - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        let score = 0;
+        quizQuestions.forEach((q, idx) => {
+          if (selectedAnswers[idx] === q.correctIndex) score++;
+        });
+        recordQuizScore(score, totalQuestions);
+        setIsFinished(true);
+        if (window.confetti && score >= 4) {
+          try { window.confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } }); } catch (e) {}
+        }
+      }
+    };
+
+    const handleRetake = () => {
+      setSelectedAnswers({});
+      setCurrentIndex(0);
+      setIsFinished(false);
+    };
+
+    let score = 0;
+    quizQuestions.forEach((q, idx) => {
+      if (selectedAnswers[idx] === q.correctIndex) score++;
+    });
+    const percentage = Math.round((score / totalQuestions) * 100);
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 64px', maxWidth: '800px' } },
+      h('div', { style: { marginBottom: '28px' } },
+        h(Badge, { variant: 'accent', icon: h(IconAward, { size: 14 }), style: { marginBottom: '12px' } }, 'Certified Civic Knowledge'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '10px' } }, t.quiz.title),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)' } }, t.quiz.subtitle)
+      ),
+      !isFinished
+        ? h(Card, { style: { padding: '36px' } },
+          h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' } },
+            h('span', { style: { fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' } }, `${t.quiz.questionOf} ${currentIndex + 1} of ${totalQuestions}`),
+            h(Badge, { variant: 'default' }, `Topic: ${currentQ.topicTag}`)
+          ),
+          h('div', { style: { marginBottom: '28px' } }, h(ProgressBar, { value: ((currentIndex + 1) / totalQuestions) * 100, height: 6 })),
+          h('h2', { style: { fontSize: '19px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.45, marginBottom: '24px' } }, currentQ.question[language] || currentQ.question.en),
+          h('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' } },
+            (currentQ.options[language] || currentQ.options.en).map((optText, optIdx) => {
+              const isSelected = selectedAnswers[currentIndex] === optIdx;
+              const isCorrect = currentQ.correctIndex === optIdx;
+              const showValidation = isAnswered;
+
+              let borderColor = 'var(--border-subtle)';
+              let bgColor = 'var(--bg-card)';
+              if (showValidation) {
+                if (isCorrect) { borderColor = 'var(--success)'; bgColor = 'var(--success-subtle)'; }
+                else if (isSelected) { borderColor = 'var(--danger)'; bgColor = 'var(--danger-subtle)'; }
+              } else if (isSelected) {
+                borderColor = 'var(--accent-primary)'; bgColor = 'var(--accent-subtle)';
+              }
+
+              return h('div', {
+                key: optIdx,
+                onClick: () => handleSelect(optIdx),
+                style: {
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  padding: '16px 18px',
+                  borderRadius: 'var(--radius-md)',
+                  border: `1.5px solid ${borderColor}`,
+                  backgroundColor: bgColor,
+                  cursor: isAnswered ? 'default' : 'pointer',
+                  transition: 'all var(--transition-fast)'
+                }
+              },
+                h('div', {
+                  style: {
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    border: `1.5px solid ${borderColor}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 700
+                  }
+                }, String.fromCharCode(65 + optIdx)),
+                h('span', { style: { fontSize: '14.5px', lineHeight: 1.5 } }, optText)
+              );
+            })
+          ),
+          isAnswered && h('div', {
+            style: {
+              padding: '18px 20px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--bg-secondary)',
+              border: '1px solid var(--border-subtle)',
+              marginBottom: '28px'
+            }
+          },
+            h('span', { style: { fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-text)', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' } }, 'Civic Context & Explanation'),
+            h('p', { style: { fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)' } }, currentQ.explanation[language] || currentQ.explanation.en)
+          ),
+          h('div', { style: { display: 'flex', justifyContent: 'flex-end' } },
+            h(Button, {
+              variant: 'primary',
+              size: 'md',
+              disabled: !isAnswered,
+              onClick: handleNext,
+              icon: h(IconChevronRight, { size: 16, color: '#FFF' })
+            }, currentIndex === totalQuestions - 1 ? t.quiz.seeResultsBtn : t.quiz.nextBtn)
+          )
+        )
+        : h(Card, { style: { padding: '36px', textAlign: 'center' } },
+          h('div', {
+            style: {
+              width: '72px',
+              height: '72px',
+              borderRadius: '50%',
+              backgroundColor: percentage >= 70 ? 'var(--success-subtle)' : 'var(--warm-subtle)',
+              color: percentage >= 70 ? 'var(--success)' : 'var(--warm-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px'
+            }
+          }, h(IconAward, { size: 36 })),
+          h(Badge, { variant: 'accent', style: { marginBottom: '12px' } }, t.quiz.certifiedBadge),
+          h('h2', { style: { fontSize: '28px', fontWeight: 800, marginBottom: '8px' } }, `${t.quiz.scoreTitle}: ${score} / ${totalQuestions} (${percentage}%)`),
+          h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto 32px', lineHeight: 1.6 } },
+            percentage === 100 ? t.quiz.perfectScore : percentage >= 70 ? t.quiz.goodScore : t.quiz.practiceScore
+          ),
+          h('div', { style: { textAlign: 'left', marginBottom: '32px' } },
+            h('h3', { style: { fontSize: '16px', fontWeight: 700, marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' } }, t.quiz.reviewLabel),
+            h('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
+              quizQuestions.map((q, idx) => {
+                const userChoice = selectedAnswers[idx];
+                const isCorrect = userChoice === q.correctIndex;
+                return h('div', {
+                  key: q.id,
+                  style: { padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }
+                },
+                  h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' } },
+                    h('span', { style: { fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' } }, `Question ${idx + 1}`),
+                    h('span', { style: { fontSize: '12px', fontWeight: 600, color: isCorrect ? 'var(--success)' : 'var(--danger)' } }, isCorrect ? 'âœ“ Correct' : 'âœ• Incorrect')
+                  ),
+                  h('p', { style: { fontSize: '14px', fontWeight: 600, marginBottom: '6px' } }, q.question[language] || q.question.en),
+                  h('p', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, h('strong', null, 'Key Fact: '), q.explanation[language] || q.explanation.en)
+                );
+              })
+            )
+          ),
+          h('div', { style: { display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' } },
+            h(Button, { variant: 'primary', size: 'md', onClick: handleRetake, icon: h(IconRefresh, { size: 16 }) }, t.quiz.retakeBtn),
+            h(Button, { variant: 'secondary', size: 'md', onClick: () => setCurrentView('journey') }, 'Explore Election Stages')
+          )
+        )
+    );
+  }
+
+  // VIEW 7: MYTH OR FACT
+  function MythFactView() {
+    const { language, t, progress, markMythChecked } = useApp();
+    const [revealedIds, setRevealedIds] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('all');
+
+    const categories = ['all', 'Voter ID', 'Voting Machines', 'NOTA', 'Polling Procedures', 'Eligibility'];
+
+    const filtered = mythFactData.filter((m) => selectedCategory === 'all' || m.category === selectedCategory);
+
+    const toggleReveal = (id) => {
+      if (!revealedIds.includes(id)) {
+        setRevealedIds([...revealedIds, id]);
+        markMythChecked(id);
+      } else {
+        setRevealedIds(revealedIds.filter((i) => i !== id));
+      }
+    };
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 64px' } },
+      h('div', { style: { maxWidth: '800px', marginBottom: '28px' } },
+        h(Badge, { variant: 'accent', style: { marginBottom: '12px' } }, 'Anti-Misinformation Engine'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '10px' } }, t.mythFact.title),
+        h('p', { style: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 } }, t.mythFact.subtitle)
+      ),
+      // Category Pills
+      h('div', { style: { display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap' } },
+        categories.map((c) => {
+          const isActive = selectedCategory === c;
+          return h('button', {
+            key: c,
+            onClick: () => setSelectedCategory(c),
+            style: {
+              padding: '8px 14px',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '13px',
+              fontWeight: 600,
+              backgroundColor: isActive ? 'var(--accent-primary)' : 'var(--bg-card)',
+              color: isActive ? '#FFF' : 'var(--text-secondary)',
+              border: `1px solid ${isActive ? 'transparent' : 'var(--border-subtle)'}`
+            }
+          }, c === 'all' ? t.mythFact.filterAll : c);
+        })
+      ),
+      // Cards
+      h('div', { className: 'grid-2' },
+        filtered.map((item) => {
+          const isRevealed = revealedIds.includes(item.id);
+          const hasChecked = progress.mythsChecked.includes(item.id);
+
+          return h(Card, {
+            key: item.id,
+            style: { padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }
+          },
+            h('div', null,
+              h('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '12px' } },
+                h('span', { style: { fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em' } }, item.category),
+                hasChecked && h('span', { style: { fontSize: '11px', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 600 } }, h(IconCheck, { size: 12, color: 'var(--success)' }), 'Explored')
+              ),
+              h('h3', { style: { fontSize: '16.5px', fontWeight: 600, lineHeight: 1.5, marginBottom: '20px' } }, `â€œ${item.statement[language] || item.statement.en}â€`),
+              isRevealed
+                ? h('div', null,
+                  h('div', { style: { marginBottom: '12px' } }, h(Badge, { variant: item.isFact ? 'success' : 'warning' }, item.verdict[language] || item.verdict.en)),
+                  h('p', { style: { fontSize: '14px', lineHeight: 1.6, marginBottom: '14px' } }, item.explanation[language] || item.explanation.en),
+                  h('div', { style: { fontSize: '12px', color: 'var(--text-muted)', borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' } },
+                    h('strong', null, `${t.mythFact.officialSource}: `), item.source
+                  )
+                )
+                : h('div', { style: { padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', textAlign: 'center', marginBottom: '16px' } },
+                  h('span', { style: { fontSize: '13px', color: 'var(--text-secondary)' } }, 'Click below to verify whether this claim is true or a common election myth.')
+                )
+            ),
+            h('div', { style: { marginTop: '18px' } },
+              h(Button, {
+                variant: isRevealed ? 'outline' : 'primary',
+                size: 'sm',
+                onClick: () => toggleReveal(item.id)
+              }, isRevealed ? 'Hide Verification' : t.mythFact.btnCheck)
+            )
+          );
+        })
+      )
+    );
+  }
+
+  // VIEW 8: ABOUT
+  function AboutView() {
+    const { t } = useApp();
+
+    return h('div', { className: 'fade-in container', style: { padding: '40px 0 64px', maxWidth: '840px' } },
+      h('div', { style: { marginBottom: '32px' } },
+        h(Badge, { variant: 'accent', style: { marginBottom: '12px' } }, 'Platform Mission'),
+        h('h1', { style: { fontSize: '32px', fontWeight: 800, marginBottom: '10px' } }, `About ${t.brand}`),
+        h('p', { style: { fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.6 } },
+          `â€œ${t.tagline}â€ â€” Building informed, confident, and active democratic participants through transparent technology.`
+        )
+      ),
+      h('div', { style: { display: 'flex', flexDirection: 'column', gap: '24px' } },
+        h(Card, { style: { padding: '32px' } },
+          h('h2', { style: { fontSize: '20px', fontWeight: 700, marginBottom: '12px' } }, 'Our Civic Educational Purpose'),
+          h('p', { style: { fontSize: '15px', lineHeight: 1.65, marginBottom: '16px' } },
+            'ELECTRA was created to dismantle the mystery surrounding modern elections. While voting is a cornerstone constitutional right, many citizensâ€”especially first-time votersâ€”face anxiety or confusion regarding registration checks, voting booth protocols, EVM & VVPAT mechanisms, and tallying integrity.'
+          ),
+          h('p', { style: { fontSize: '14.5px', color: 'var(--text-secondary)', lineHeight: 1.65 } },
+            'By providing an interactive, chronological walkthrough from election notification to counting day, ELECTRA empowers every citizen with verifiable knowledge.'
+          )
+        ),
+        h(Card, { style: { padding: '32px', borderLeft: '4px solid var(--warm-accent)' } },
+          h('div', { style: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' } },
+            h(IconShield, { size: 22, color: 'var(--warm-accent)' }),
+            h('h3', { style: { fontSize: '18px', fontWeight: 700 } }, 'Non-Partisan & Fictional Simulation Declaration')
+          ),
+          h('ul', { style: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.55 } },
+            h('li', { style: { display: 'flex', gap: '8px' } }, h('span', { style: { color: 'var(--warm-accent)', fontWeight: 700 } }, 'â€¢'), h('span', null, h('strong', null, 'Zero Endorsement: '), 'ELECTRA does not recommend, support, or oppose any political party or candidate.')),
+            h('li', { style: { display: 'flex', gap: '8px' } }, h('span', { style: { color: 'var(--warm-accent)', fontWeight: 700 } }, 'â€¢'), h('span', null, h('strong', null, 'Fictional Ballot Simulator: '), 'All candidates, symbols, and scenarios in the Voting Simulator are entirely fictional and designed solely for educational demonstration.')),
+            h('li', { style: { display: 'flex', gap: '8px' } }, h('span', { style: { color: 'var(--warm-accent)', fontWeight: 700 } }, 'â€¢'), h('span', null, h('strong', null, 'Absolute Privacy: '), 'ELECTRA never asks for, captures, or stores personal voter IDs, biometrics, or credentials.'))
+          )
+        ),
+        h(Card, { style: { padding: '32px' } },
+          h('h3', { style: { fontSize: '18px', fontWeight: 700, marginBottom: '14px' } }, 'Statutory Sources & References'),
+          h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', fontSize: '13.5px', color: 'var(--text-secondary)' } },
+            h('div', { style: { padding: '14px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' } },
+              h('strong', null, 'The Representation of the People Act'),
+              h('p', { style: { fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' } }, 'Legal provisions governing notification, nominations, scrutiny, and polling rules.')
+            ),
+            h('div', { style: { padding: '14px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' } },
+              h('strong', null, 'Conduct of Elections Rules, 1961'),
+              h('p', { style: { fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' } }, 'Procedures for voting compartments, indelible ink, EVMs, VVPAT audits, and counting.')
+            ),
+            h('div', { style: { padding: '14px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' } },
+              h('strong', null, 'Election Commission Manuals'),
+              h('p', { style: { fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' } }, 'Official operational handbooks for Returning Officers, Presiding Officers, and Polling Agents.')
+            )
+          )
+        )
+      )
+    );
+  }
+
+  /* =========================================================================
+     7. ROOT APP COMPONENT & MOUNT
+     ========================================================================= */
+  function AppContent() {
+    const { currentView } = useApp();
+
+    return h('div', { style: { display: 'flex', flexDirection: 'column', minHeight: '100vh' } },
+      h(Header),
+      h('main', { style: { flex: 1 } },
+        (currentView === 'home' || currentView === 'explore') && h(HomeView),
+        currentView === 'journey' && h(ElectionJourneyView),
+        currentView === 'simulator' && h(VotingSimulatorView),
+        currentView === 'glossary' && h(KnowledgeHubView),
+        currentView === 'quiz' && h(QuizView),
+        currentView === 'mythfact' && h(MythFactView),
+        currentView === 'ai' && h(AskElectraView),
+        currentView === 'about' && h(AboutView)
+      ),
+      h(Footer),
+      h(AccessibilityModal)
+    );
+  }
+
+  function RootApp() {
+    return h(AppProvider, null, h(AppContent));
+  }
+
+  // Mount to #root
+  const rootEl = document.getElementById('root');
+  if (rootEl && window.ReactDOM && window.ReactDOM.createRoot) {
+    const root = ReactDOM.createRoot(rootEl);
+    root.render(h(RootApp));
+  }
+})();
+
+  </script>
+</body>
+</html>
